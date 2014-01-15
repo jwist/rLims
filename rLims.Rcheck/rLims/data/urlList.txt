@@ -1,5 +1,0 @@
-http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ
-http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8405946&key=MdmsufXhXk
-http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=6528763&key=BDiayNJUS8
-http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8316869&key=P5pzErJ490
-http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=6528214&key=NK2pYSFIhD
