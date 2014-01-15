@@ -261,7 +261,7 @@ lims.getParameters <- function(entryList) {
 	iupacs <- Reduce(function(x,y) merge(x,y,all=TRUE),iupacs)
 
 	infos <- lapply(entryList, function(x) data.frame("entryID"=x$entryID, "catalogID"=I(x$catalogID),
-				"batchID"=I(x$batchID),"writeKey"=I(x$writeKey),"readKey"=I(x$readKey),
+				"batchID"=I(x$batchID),"readKey"=I(x$readKey),
 				"creationDate"=I(x$creationDate),"userEmail"=I(x$user$email),"lastModificationDate"=I(x$lastModificationDate)))
 	infos <- Reduce(function(x,y) merge(x,y,all=TRUE),infos)
 	
@@ -399,13 +399,22 @@ lims.createDataSet <- function(nmrList) {
 ##############################
 
 
-lims <- function(urlList,experimentList=list()) {
+lims <- function(urlList,experimentList=list(),...) {
 
+	# retrieve optional arguments
+	argList<-list(...)
+	
 	today <- lims.getDate()$date
 	logfile <- paste(today,'_lims.log',sep='')
 
-	#entryList <- lims.getJSON(urlList,LOG=TRUE,logfile=logfile)
 	entryList <- lims.getJSON(urlList,LOG=FALSE)
+	
+	# new list of nmr url	
+	resourceURLList <- sapply(entryList,function(x) x$nmrs[[1]]$resourceURL)
+	
+	if (!is.na(match('old',names(argList)))) {
+		F <- match(resourceURLList,argList$old$nmrInfo$resourceURL)
+	}
 	
 	entryData <- lims.getParameters(entryList)
 
