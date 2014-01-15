@@ -1,0 +1,408 @@
+Hmm ... looks like a package
+
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013)
+ restricted \write18 enabled.
+entering extended mode
+
+(/private/var/folders/04/r9_7x1kd71jdmnx7clg_c2vm0000gn/T/RtmpA7kRgl/Rd2pdf17d3
+55dd91e58/Rd2.tex
+LaTeX2e <2011/06/27>
+Babel <3.9f> and hyphenation patterns for 21 languages loaded.
+
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/bk10.clo))
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/Rd.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ts1enc.def))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/inconsolata/inconsolata.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/graphics/keyval.sty))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/graphics/color.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/latexconfig/color.cfg)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/pdftex-def/pdftex.def
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/infwarerr.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/ltxcmds.sty)))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.s
+ty
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/hobsub-generic.st
+y)) (/usr/local/texlive/2013basic/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty)
+)
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 361.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 361.
+
+) (/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/t1enc.dfu)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ot1enc.dfu)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/omsenc.dfu)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ts1enc.dfu))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/latin1.def))
+Writing index file Rd2.idx
+No file Rd2.aux.
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/upquote/upquote.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/gettitlestring.st
+y)) (/usr/local/texlive/2013basic/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/psnfss/t1phv.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def) [1{/usr/local
+/texlive/2013basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (363.52267pt too wide) in paragraph at lines 87--88
+[]\T1/ptm/m/n/10 URLs can be ob-tained by re-plac-ing the cor-rect in-for-ma-ti
+on for en-tryID and key in "http://mylims.univalle.edu.co/lims/Lims?action=GetJ
+SON&table=entry&id=6528214&key=NK2pYSFIhD" 
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/inconsolata/ts1zi4.fd)
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 104--104
+ []\T1/zi4/m/n/9 #url1 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=8405946&key=MdmsufXhXk\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 105--105
+ []\T1/zi4/m/n/9 #url2 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 106--106
+ []\T1/zi4/m/n/9 #url3 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=6528763&key=BDiayNJUS8\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 107--107
+ []\T1/zi4/m/n/9 #url4 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=8316869&key=P5pzErJ490\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 108--108
+ []\T1/zi4/m/n/9 #url5 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=6528214&key=NK2pYSFIhD\TS1/zi4/m
+/n/9 '[] 
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def) [2]
+No file Rd2.ind.
+[3] (./Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information){/usr/local/texlive/2013bas
+ic/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/local/texlive/2013ba
+sic/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2013basic/texmf-
+dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/2013basic/texm
+f-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/
+2013basic/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/20
+13basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2013bas
+ic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013basic/te
+xmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013basic/texmf-d
+ist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (3 pages, 71378 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.15 [TeX Live 2013] (kpathsea + Thai support).
+Scanning input file ./Rd2.idx....done (9 entries accepted, 0 rejected).
+Sorting entries....done (36 comparisons).
+Generating output file ./Rd2.ind....done (28 lines written, 0 warnings).
+Output written in ./Rd2.ind.
+Transcript written in ./Rd2.ilg.
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013)
+ restricted \write18 enabled.
+entering extended mode
+
+(/private/var/folders/04/r9_7x1kd71jdmnx7clg_c2vm0000gn/T/RtmpA7kRgl/Rd2pdf17d3
+55dd91e58/Rd2.tex
+LaTeX2e <2011/06/27>
+Babel <3.9f> and hyphenation patterns for 21 languages loaded.
+
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/bk10.clo))
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/Rd.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ts1enc.def))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/inconsolata/inconsolata.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/graphics/keyval.sty))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/graphics/color.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/latexconfig/color.cfg)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/pdftex-def/pdftex.def
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/infwarerr.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/ltxcmds.sty)))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.s
+ty
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/hobsub-generic.st
+y)) (/usr/local/texlive/2013basic/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty)
+)
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 361.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 361.
+
+) (/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/t1enc.dfu)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ot1enc.dfu)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/omsenc.dfu)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ts1enc.dfu))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/latin1.def))
+Writing index file Rd2.idx
+(./Rd2.aux) (/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/upquote/upquote.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/gettitlestring.st
+y)) (./Rd2.out) (./Rd2.out)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/psnfss/t1phv.fd) (./Rd2.toc)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def)
+Overfull \vbox (1.87206pt too high) has occurred while \output is active
+[1{/usr/local/texlive/2013basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (363.52267pt too wide) in paragraph at lines 87--88
+[]\T1/ptm/m/n/10 URLs can be ob-tained by re-plac-ing the cor-rect in-for-ma-ti
+on for en-tryID and key in "http://mylims.univalle.edu.co/lims/Lims?action=GetJ
+SON&table=entry&id=6528214&key=NK2pYSFIhD" 
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/inconsolata/ts1zi4.fd)
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 104--104
+ []\T1/zi4/m/n/9 #url1 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=8405946&key=MdmsufXhXk\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 105--105
+ []\T1/zi4/m/n/9 #url2 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 106--106
+ []\T1/zi4/m/n/9 #url3 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=6528763&key=BDiayNJUS8\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 107--107
+ []\T1/zi4/m/n/9 #url4 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=8316869&key=P5pzErJ490\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 108--108
+ []\T1/zi4/m/n/9 #url5 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=6528214&key=NK2pYSFIhD\TS1/zi4/m
+/n/9 '[] 
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def) [2]
+(./Rd2.ind [3]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 15.
+
+[4]) (./Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information){/usr/local/texlive/2013bas
+ic/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/local/texlive/2013ba
+sic/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2013basic/texmf-
+dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/2013basic/texm
+f-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/
+2013basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texl
+ive/2013basic/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texliv
+e/2013basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/201
+3basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013basi
+c/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013basic/tex
+mf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (4 pages, 80272 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.15 [TeX Live 2013] (kpathsea + Thai support).
+Scanning input file ./Rd2.idx....done (9 entries accepted, 0 rejected).
+Sorting entries....done (36 comparisons).
+Generating output file ./Rd2.ind....done (28 lines written, 0 warnings).
+Output written in ./Rd2.ind.
+Transcript written in ./Rd2.ilg.
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013)
+ restricted \write18 enabled.
+entering extended mode
+
+(/private/var/folders/04/r9_7x1kd71jdmnx7clg_c2vm0000gn/T/RtmpA7kRgl/Rd2pdf17d3
+55dd91e58/Rd2.tex
+LaTeX2e <2011/06/27>
+Babel <3.9f> and hyphenation patterns for 21 languages loaded.
+
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/bk10.clo))
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/Rd.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ts1enc.def))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/inconsolata/inconsolata.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/graphics/keyval.sty))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/graphics/color.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/latexconfig/color.cfg)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/pdftex-def/pdftex.def
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/infwarerr.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/ltxcmds.sty)))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.s
+ty
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/hobsub-generic.st
+y)) (/usr/local/texlive/2013basic/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty)
+)
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 361.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 361.
+
+) (/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/t1enc.dfu)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ot1enc.dfu)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/omsenc.dfu)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ts1enc.dfu))
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/latin1.def))
+Writing index file Rd2.idx
+(./Rd2.aux) (/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/upquote/upquote.sty)
+(/usr/local/texlive/2013basic/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/local/texlive/2013basic/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2013basic/texmf-dist/tex/generic/oberdiek/gettitlestring.st
+y)) (./Rd2.out) (./Rd2.out)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/psnfss/t1phv.fd) (./Rd2.toc)
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def)
+Overfull \vbox (23.87206pt too high) has occurred while \output is active
+[1{/usr/local/texlive/2013basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def)
+Overfull \hbox (363.52267pt too wide) in paragraph at lines 87--88
+[]\T1/ptm/m/n/10 URLs can be ob-tained by re-plac-ing the cor-rect in-for-ma-ti
+on for en-tryID and key in "http://mylims.univalle.edu.co/lims/Lims?action=GetJ
+SON&table=entry&id=6528214&key=NK2pYSFIhD" 
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/inconsolata/ts1zi4.fd)
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 104--104
+ []\T1/zi4/m/n/9 #url1 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=8405946&key=MdmsufXhXk\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 105--105
+ []\T1/zi4/m/n/9 #url2 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 106--106
+ []\T1/zi4/m/n/9 #url3 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=6528763&key=BDiayNJUS8\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 107--107
+ []\T1/zi4/m/n/9 #url4 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=8316869&key=P5pzErJ490\TS1/zi4/m
+/n/9 '[] 
+
+Overfull \hbox (66.4809pt too wide) in paragraph at lines 108--108
+ []\T1/zi4/m/n/9 #url5 <- \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 http://mylims.univalle.
+edu.co/lims/Lims?action=GetJSON&table=entry&id=6528214&key=NK2pYSFIhD\TS1/zi4/m
+/n/9 '[] 
+(/usr/local/texlive/2013basic/texmf-dist/tex/latex/base/utf8.def) [2]
+(./Rd2.ind [3]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 15.
+
+[4]) (./Rd2.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information){/usr/local/texlive/2013bas
+ic/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/local/texlive/2013ba
+sic/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2013basic/texmf-
+dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/2013basic/texm
+f-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/texlive/
+2013basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texl
+ive/2013basic/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texliv
+e/2013basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/201
+3basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013basi
+c/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2013basic/tex
+mf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (4 pages, 81075 bytes).
+Transcript written on Rd2.log.
+Saving output to 'rLims-manual.pdf' ...
+Done
+You may want to clean up by 'rm -rf /var/folders/04/r9_7x1kd71jdmnx7clg_c2vm0000gn/T//RtmpA7kRgl/Rd2pdf17d355dd91e58'

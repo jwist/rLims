@@ -1,8 +1,8 @@
-\name{lims-package}
+\name{rLims-package}
 \alias{lims-package}
-\alias{lims}
+\alias{rLims}
 \docType{package}
-\title{lims}
+\title{rLims}
 \description{retrieve entry from www.mylims.org database}
 \details{
 \tabular{ll}{

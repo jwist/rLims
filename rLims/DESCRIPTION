@@ -9,7 +9,7 @@ Description: www.mylims.org is a databse of spectrospcopica data (NMR, MS, IR,
     GC-MS, etc.) that can be fed directly from Bruker machines. This package
     allows to create dataset from data stored in the database for further
     analysis.
-License: Unlimited
+License: GPL-3
 Depends:
     R (>= 2.7.0),
     rjson

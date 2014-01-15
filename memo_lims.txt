@@ -1,0 +1,12 @@
+
+
+with basicTex we have to install 'courier' and 'helvetic'
+sudo tlmgr install courier
+sudo tlmgr install helvetic
+
+we installed R package devtools that seems to allow working with Rstudio console
+
+then to build the package
+R CMD build lims
+R CMD check lims
+R CMD rd2pdf lims // to build only the documentation

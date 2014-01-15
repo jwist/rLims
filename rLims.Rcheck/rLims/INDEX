@@ -1,0 +1,3 @@
+lims                    retrieve spectra from www.mylims.org database
+lims-package            rLims
+urlList                 list of input URL to test rLims package
