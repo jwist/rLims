@@ -234,7 +234,10 @@ lims.getJSON<-function(url,LOG=FALSE,...) {
 
 ##############################
 lims.getParametersNames <- function(jsonList) {
-	G <- sapply(jsonList,function(x) sapply(x$parameters, function(y) y$description))
+	msg <- 'Check your parameters, some have empty descriptions, entryID='
+	#G <- sapply(jsonList,function(x) sapply(x$parameters, function(y) y$description))
+	G <- sapply(jsonList,function(x) sapply(x$parameters, function(y) 
+		if (y$description=="") {warning(paste(msg,x$entryID,sep='')); y$description} else {y$description} ))
 	G <- unique(unlist(G))
 	return(G) # returns a list of entries
 }
@@ -246,7 +249,8 @@ lims.getParameters <- function(entryList) {
 
 	param <- lapply(entryList, function(x) if (length(x$parameters) > 0)
 					{data.frame("entryID"=x$entryID, sapply(x$parameters, 
-					function(y) eval(parse(text=paste('data.frame("',y$description,'"=y$value)',sep='')))))} 
+					function(y) if (y$description == "") { warning(paste('empty parameter description:',x$entryID)); eval(parse(text=paste('data.frame("',"unknown",'"=y$value)',sep=''))) }
+					else {eval(parse(text=paste('data.frame("',I(y$description),'"=y$value)',sep='')))} ))} 
 					else {data.frame("entryID"=x$entryID)})
 	param <- Reduce(function(x,y) merge(x,y,all=TRUE),param)
 
@@ -260,9 +264,9 @@ lims.getParameters <- function(entryList) {
 				function(y) data.frame(y$value)))} else {data.frame("entryID"=I(x$entryID))})
 	iupacs <- Reduce(function(x,y) merge(x,y,all=TRUE),iupacs)
 
-	infos <- lapply(entryList, function(x) data.frame("entryID"=x$entryID, "catalogID"=I(x$catalogID),
-				"batchID"=I(x$batchID),"readKey"=I(x$readKey),
-				"creationDate"=I(x$creationDate),"userEmail"=I(x$user$email),"lastModificationDate"=I(x$lastModificationDate)))
+	infos <- lapply(entryList, function(x) data.frame("entryID"=x['entryID'], "catalogID"=I(x$catalogID),
+				"batchID"=I(x$batchID), "creationDate"=I(x$creationDate),
+				"userEmail"=I(x$user$email),"lastModificationDate"=I(x$lastModificationDate)))
 	infos <- Reduce(function(x,y) merge(x,y,all=TRUE),infos)
 	
 	# do some cleanup
