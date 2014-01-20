@@ -413,6 +413,9 @@ lims <- function(urlList,experimentList=list(),...) {
 
 	entryList <- lims.getJSON(urlList,LOG=FALSE)
 	
+	# this will produce a warning if empty parameter description (not necessary)
+	#lims.getParametersNames(entryList)
+	
 	# new list of nmr url	
 	resourceURLList <- sapply(entryList,function(x) x$nmrs[[1]]$resourceURL)
 	
@@ -431,6 +434,39 @@ lims <- function(urlList,experimentList=list(),...) {
 
 	return(data)
 }
+
+
+lims.get <- function(entryList=entryList) {
+	
+	n <- list()
+	for (i in 1:length(entryList)) {
+		n <- c(n, unlist(setdiff(names(entryList[[i]]),n)))
+	}
+	
+	for (i in 1:length(n)) {
+		for (j in 1:length(entryList)) {
+			if (length(entryList[[j]][[i]]) == 1) {
+				if (length(entryList[[j]][[i]][[1]]) == 1) {
+					lims.loopAppend(unlist(entryList[[j]][[i]]),'res')
+				} else {
+					lims.loopAppend("list",'res')
+				}
+			} else {
+				lims.loopAppend(NA,'res')
+			}
+		}
+	}
+	
+	t <- as.matrix(res)
+	dim(t) <- c(length(entryList),length(n))
+	t <- data.frame(t)
+	colnames(t) <- n
+	return(t)
+}
+#remove(res)
+#lims.get(entryList)
+
+
 
 # lims.getNmrs <- function(entryList,filterList) {
 # 	#"spectra"=read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
