@@ -399,6 +399,12 @@ lims.createDataSet <- function(nmrList) {
 # data <- lims.createDataSet(nmrList)
 
 
+lims.findExperimentNames <- function(entrlyList) {
+	G <- lapply(entryList,function(x) lapply(x$nmrs, function(y) y$experiment))
+	G <- unique(unlist(G))
+	return(G)
+}
+
 
 ##############################
 
