@@ -187,7 +187,7 @@ lims.spectra.setMask <- function(spectra,list=list()) {
 
 #example
 #spectra <- lims.spectra(spec[1000:2000,])
-# lims.spectra.setMask(spectra,list=c(8.4,8.7,8.8,9,9.5,9.57))
+# spectra <- lims.spectra.setMask(spectra,list=c(8.4,8.7,8.8,9,9.5,9.57))
 # plot(spectra)
 
 # fake <- list(x=c(1:100),y=sin(seq(1,6.27,length.out=100)))
@@ -441,7 +441,7 @@ lims <- function(urlList,experimentList=list(),...) {
 	return(data)
 }
 
-
+## new function to do it simpler (not in use)
 lims.get <- function(entryList=entryList) {
 	
 	n <- list()
@@ -473,45 +473,5 @@ lims.get <- function(entryList=entryList) {
 #lims.get(entryList)
 
 
-
-# lims.getNmrs <- function(entryList,filterList) {
-# 	#"spectra"=read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
-# 	t <- (lapply(entryList,function(x) unlist(lapply(x$nmrs,
-# 				function(y) if (match(y$experiment,filterList[[1]]) != 0) {list("entryID"=x$entryID,
-# 				"url"=I(y$resourceURL), "temperature"=y$temperature,
-# 				"nucleus"=I(y$nucleus), "solvent"=I(y$solvent), "experiment"=I(y$experiment),
-# 				#"spectra"=read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric'),
-# 				"parameters"=ggg$params[ggg$params$entryID == x$entryID,]  )} ),recursive=FALSE) ))
-# 	return(t)
-# }
-# #example
-# t <- lims.getNmrs(g2,filterList=list(list('zg30',"noesygpps1dcomp"),list('C6D6','COFFEEmeoh')))
-
-# 
-# lims.getList <- function(y) {
-# 	print(paste('ddd:',y[[1]],length(y[[1]])))
-# 	if (length(y) != 0) {
-# 		eval(parse(text=paste('data.frame("',y$description,'"=y$value)',sep='')))
-# 	} else {
-# 		data.frame("NA"=NA)
-# 	}	
-# }
-# 
-# lims.getListRec <- function() {
-# 	if (!is.list(value)[[1]] == 1) {
-# 		value <- paste(strsplit(g2[[1]]$keywords[[4]]$value,'\\.')[[1]],collapse='_')
-# 		print(value)
-# 		eval(parse(text=paste('data.frame("','d','"="',unlist(value[[1]][1]),'")',sep='')))
-# 	} else if (length(value) == 0) {
-# 		data.frame("NA"=NA)
-# 	} else if (length(value) > 1) {
-# 		value <- paste(strsplit(g2[[1]]$keywords[[4]]$value,'\\.')[[1]],collapse='_')
-# 		#data.frame( sapply(seq_along(value),lims.getListRec) )
-# 		data.frame("NA"=NA)
-# 	}
-# }
-
-
-#sapply(seq_along(entryList), function(i) sapply(seq_along(entryList[[i]]), function(i) if(!is.list(entryList[[1]][i][[1]][1])) {eval(parse(text=paste('data.frame("',names(entryList[[1]][i]),'"="',I(entryList[[1]][i][[1]][1]),'")',sep='')))} ))
 
 
