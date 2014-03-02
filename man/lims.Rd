@@ -7,7 +7,7 @@ retrieve spectra from www.mylims.org database
 retrieve a set of spectra from www.mylims.org database, chosen by experiment names.
 }
 \usage{
-lims(urlList,experimentList)
+lims(urlList, experimentList = list(), ...)
 }
 \arguments{
   \item{urlList}{
@@ -15,6 +15,9 @@ A list of URLs. Each URL should be the complete URL that is obtained by launchin
 }
   \item{experimentList}{
 A list of experiment names that should be retrieved.
+}
+  \item{...}{
+Addtional parameters to be passed to the function.
 }
 }
 \details{
@@ -26,7 +29,6 @@ www.mylims.org
 \author{
 Julien Wist
 }
-
 
 \examples{
 

@@ -1,2 +1,5 @@
 importFrom(rjson, fromJSON, toJSON)
-export(lims)
+export(lims,lims.spectraCreator,lims.getDate,lims.log,lims.spectra.toDataframe)
+export(plot.spectra,dim.spectra,lims.spectra.setMask,lims.getJSON)
+export(lims.getParametersNames,lims.getParameters,lims.findExperimentNames)
+export(lims.getNmrs,lims.createDataSet,lims.findSolventNames)

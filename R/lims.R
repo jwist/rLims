@@ -40,10 +40,10 @@ lims.loopAppend <- function(var,dest) {
 ##############################
 
 ##############################
-## lims.spectra allows to create a spectra object (S3) from a list of x and y data. 
+## lims.spectraCreator allows to create a spectra object (S3) from a list of x and y data. 
 ## A mask can be attributed that will be used by plot methods and other to display
 ## a selected area of the spectra without replicating the data in a new variable
-lims.spectra <- function(spec,type='nmr',mask=NULL) {
+lims.spectraCreator <- function(spec,type='nmr',mask=NULL) {
 	x_min <- range(spec[[1]])[1]
 	x_max <- range(spec[[1]])[2]
 	y <- spec[[2]]
@@ -68,7 +68,7 @@ lims.spectra <- function(spec,type='nmr',mask=NULL) {
 
 # example 1
 # fakeSpectra <- list(x=c(1:100),y=sin(seq(1,6.27,length.out=100)))
-# s <- lims.spectra(fakeSpectra)
+# s <- lims.spectraCreator(fakeSpectra)
 
 # example 2
 # logfile <- 'lims.log'
@@ -76,12 +76,12 @@ lims.spectra <- function(spec,type='nmr',mask=NULL) {
 # entry <- lims.getJSON('http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ')
 #
 # spect <- read.table(sprintf("%s&filter=JcampToXY",entry[[1]]$nmrs[[1]]$resourceURL),sep=',',colClasses='numeric')
-# spectra <- lims.spectra(spec)
+# spectra <- lims.spectraCreator(spec)
 
 ##############################
 ## this methods returns a data.frame for spectra object in such a way that data
 ## can be displayed using the generic plot function
-data.frame.spectra <- function(spectra,full=FALSE) {
+lims.spectra.toDataframe <- function(spectra,full=FALSE) {
 	if (full) {
 		return(data.frame(t(as.numeric(spectra$intensity))))
 	} else {
@@ -91,39 +91,44 @@ data.frame.spectra <- function(spectra,full=FALSE) {
 
 # example 
 # fakeSpectra <- list(x=c(1:100),y=sin(seq(1,6.27,length.out=100)))
-# s <- lims.spectra(fakeSpectra)
+# s <- lims.spectraCreator(fakeSpectra)
 ## will use the plot.spectra methods
 # plot(s) 
 ## while this will use the generic plot function
-# plot(as.numeric(data.frame.spectra(s)))
+# plot(as.numeric(lims.spectra.toDataframe(s)))
 
 ##############################
 ## this function retrieve the dimension of a spectra object
-dim.spectra <- function(spectra) {
-	return(length(spectra$intensity))
+dim.spectra <- function(x) {
+	return(length(x$intensity))
 }
 
 # example 
 # fakeSpectra <- list(x=c(1:100),y=sin(seq(1,6.27,length.out=100)))
-# s <- lims.spectra(fakeSpectra)
+# s <- lims.spectraCreator(fakeSpectra)
 # dim(s)
 
 ##############################
 ## plot.spectra is the method to plot spectra object.
-plot.spectra <- function(spectra,xlimit=NULL,ylimit=NULL) {
+plot.spectra <- function(x,...) {
+	
+	spectra <- x ## to maintain the same arguments than generic function
+	
 	y <- spectra$intensity[spectra$mask]
 	x <- seq(spectra$xlims[1],spectra$xlims[2],along.with=spectra$intensity)[spectra$mask]
 	
-	if (is.null(xlimit)) {
+	argList<-list(...)
+	
+	if ( sum( names(argList) == 'xlimit' ) == 0 ) {
 		xlimit <- (range(x))
 	} else {
-		xlimit= (range(xlimit))
+		xlimit= (range(argList$xlimit))
 	}
 	
-	if (is.null(ylimit)) {
+	if ( sum( names(argList) == 'ylimit' ) == 0 ) {
 		ylimit <- range(y)
 	} else {
-		ylimit=range(ylimit)
+		ylimit=range(argList$ylimit)
 	}
 	
 	switch(spectra$type, 
@@ -143,17 +148,22 @@ plot.spectra <- function(spectra,xlimit=NULL,ylimit=NULL) {
 # plot(spectra,xlimit=c(9.4,9.7),ylimit=c(-1e4,3e5))
 
 ##############################
-lims.spectra.setMask <- function(spectra,list=list()) {
+lims.spectra.setMask <- function(spectraVarName,list=list()) {
 
+	spectra <- get(spectraVarName,envir = .GlobalEnv)
 	if (class(spectra) != 'spectra') {
 		stop('Spectra is not of class spectra, please check!')
 	} else {
 		
+		ppm <- seq(spectra$xlims[1],spectra$xlims[2],along.with=spectra$intensity)
+		
 		if (length(list) == 0) {
-			warning('list is empty, no mask created')
+			
+			warning('list is empty, full region considered')
+			I <- factor(rep(TRUE,length(ppm)))
+			
 		} else {
 			
-			ppm <- seq(spectra$xlims[1],spectra$xlims[2],along.with=spectra$intensity)
 			I <- factor(findInterval(ppm,list))
 			
 			# evaluate how to deal with found intervals 
@@ -176,25 +186,23 @@ lims.spectra.setMask <- function(spectra,list=list()) {
 			}
 		}
 	}
-  #unclass(spectra)
-	#assign("spectra[['mask']]",as.logical(I),envir = .GlobalEnv)
-	#spectra$mask <<- as.logical(I)
-	
-	#return(as.logical(I))
+
 	spectra$mask <- as.logical(I)
-	return(spectra)
+	assign(spectraVarName,spectra,envir = .GlobalEnv)
+
 }
 
 #example
-#spectra <- lims.spectra(spec[1000:2000,])
-# spectra <- lims.spectra.setMask(spectra,list=c(8.4,8.7,8.8,9,9.5,9.57))
+# spectra <- lims.spectraCreator(spec[1000:2000,])
+# lims.spectra.setMask('spectra',list=c(8.4,8.7,8.8,9,9.5,9.57))
 # plot(spectra)
 
 # fake <- list(x=c(1:100),y=sin(seq(1,6.27,length.out=100)))
-# s <- lims.spectra(fake)
+# s <- lims.spectraCreator(fake)
 # plot(s)
-# lims.spectra.setMask(s,list=c(10,20,40,50,60,100))
+# lims.spectra.setMask('s',list=c(10,20,40,50,80,100))
 # plot(s)
+
 
 ##############################
 #### LIMS FUNCTIONS ####
@@ -210,7 +218,8 @@ lims.getJSON<-function(url,LOG=FALSE,...) {
 		if (length(url) == 0) {
 			stop(paste('Please provide at least one url!'))
 		} else {
-			json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[i]), collapse=""))[[1]][[1]] ,'url'=url[i])) # retrieve JSON
+			#json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[i],warn=FALSE), collapse="")) ,'url'=url[i])) # retrieve JSON
+			json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[i],warn=FALSE), collapse=""))[[1]][[1]] ,'url'=url[i])) # retrieve JSON
 			if (LOG) {
 				msg <- paste("retrieved: ",length(json_data)," json" )
 				lims.log(prefix='        ',scriptName=scriptName,msg=msg,file=argList$logfile)
@@ -298,10 +307,48 @@ lims.getParameters <- function(entryList) {
 
 
 ##############################
-lims.getNmrs <- function(entryList=entryList,entryData=entryData,Filter=list(),OP='AND',dry=FALSE,LOG=FALSE,...) {
+lims.findExperimentNames <- function(entryList) {
+	G <- lapply(entryList,function(x) lapply(x$nmrs, function(y) y$experiment))
+	G <- unique(unlist(G))
+	return(G)
+}
+
+##############################
+lims.findSolventNames <- function(entryList) {
+	G <- lapply(entryList,function(x) lapply(x$nmrs, function(y) y$solvent))
+	G <- unique(unlist(G))
+	return(G)
+}
+
+##############################
+lims.getNmrs <- function(entryList=entryList,...) {
 	
 	functionName <- 'lims.getNmrs'
 	argList<-list(...)
+	
+	if (!is.na(match('LOG',names(argList)))) {
+		LOG <- argList$LOG
+	} else {
+		LOG <- FALSE
+	}
+
+	if (!is.na(match('dry',names(argList)))) {
+		dry <- argList$dry
+	} else {
+		dry <- FALSE
+	}
+	
+	if (!is.na(match('OP',names(argList)))) {
+		OP <- argList$OP
+	} else {
+		OP <- 'AND'
+	}
+
+	if (!is.na(match('Filter',names(argList)))) {
+		Filter <- argList$Filter
+	} else {
+		Filter <- list()
+	}
 	
 	t <- list()
 	s <- list()
@@ -337,7 +384,7 @@ lims.getNmrs <- function(entryList=entryList,entryData=entryData,Filter=list(),O
 				# retrieve spectra and store them as a list to avoid dimension problems
 				if (!dry) {
 					spect <- read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
-					s <- rbind(s, list('spectra'=lims.spectra(spect[1:(dim(spect)[1]/2),] ))) # taking only real part of spectrum
+					s <- rbind(s, list('spectra'=lims.spectraCreator(spect[1:(dim(spect)[1]/2),] ))) # taking only real part of spectrum
 					if (LOG) {
 						msg <- paste('spectra: ',x$entryID,' / ', y$resourceURL,sep='')
 						lims.log(prefix='        ',scriptName=functionName,msg=msg,file=argList$logfile)
@@ -345,16 +392,19 @@ lims.getNmrs <- function(entryList=entryList,entryData=entryData,Filter=list(),O
 					
 				}
 				# merge infos
-				p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
-				info  <- rbind(info, entryData$info[entryData$info$entryID == x$entryID,])
-				t <- rbind(t,list(
-					'entryID'=x$entryID,
-					'experiment'=y$experiment,
-					'temperature'=y$temperature,
-					'nucleus'=y$nucleus,
-					'solvent'=y$solvent,	
-					'resourceURL'=y$resourceURL
-				))
+				if (!is.na(match('entryData',names(argList)))) {
+					entryData = argList$entryData
+					p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
+					info  <- rbind(info, entryData$info[entryData$info$entryID == x$entryID,])
+					t <- rbind(t,list(
+						'entryID'=x$entryID,
+						'experiment'=y$experiment,
+						'temperature'=y$temperature,
+						'nucleus'=y$nucleus,
+						'solvent'=y$solvent,	
+						'resourceURL'=y$resourceURL
+					))
+				}
 			}
 			
 			
@@ -387,8 +437,8 @@ lims.createDataSet <- function(nmrList) {
 		s <- nmrList[['spectra']]
 		
 		for (i in 1:nrow(s)) {
-			ifelse(!exists('nmrData'),nmrData <- as.numeric(data.frame.spectra(s[[i]])),
-						 nmrData <- rbind(nmrData, as.numeric(data.frame.spectra(s[[i]]))))
+			ifelse(!exists('nmrData'),nmrData <- as.numeric(lims.spectra.toDataframe(s[[i]])),
+						 nmrData <- rbind(nmrData, as.numeric(lims.spectra.toDataframe(s[[i]]))))
 		}
 		
 		ppm <- seq(s[[1]]$xlims[1],s[[1]]$xlims[2],along.with=s[[1]]$intensity)[s[[1]]$mask]
@@ -398,17 +448,7 @@ lims.createDataSet <- function(nmrList) {
 # example
 # data <- lims.createDataSet(nmrList)
 
-
-lims.findExperimentNames <- function(entrlyList) {
-	G <- lapply(entryList,function(x) lapply(x$nmrs, function(y) y$experiment))
-	G <- unique(unlist(G))
-	return(G)
-}
-
-
 ##############################
-
-
 lims <- function(urlList,experimentList=list(),...) {
 
 	# retrieve optional arguments
@@ -441,36 +481,37 @@ lims <- function(urlList,experimentList=list(),...) {
 	return(data)
 }
 
-## new function to do it simpler (not in use)
-lims.get <- function(entryList=entryList) {
-	
-	n <- list()
-	for (i in 1:length(entryList)) {
-		n <- c(n, unlist(setdiff(names(entryList[[i]]),n)))
-	}
-	
-	for (i in 1:length(n)) {
-		for (j in 1:length(entryList)) {
-			if (length(entryList[[j]][[i]]) == 1) {
-				if (length(entryList[[j]][[i]][[1]]) == 1) {
-					lims.loopAppend(unlist(entryList[[j]][[i]]),'res')
-				} else {
-					lims.loopAppend("list",'res')
-				}
-			} else {
-				lims.loopAppend(NA,'res')
-			}
-		}
-	}
-	
-	t <- as.matrix(res)
-	dim(t) <- c(length(entryList),length(n))
-	t <- data.frame(t)
-	colnames(t) <- n
-	return(t)
-}
-#remove(res)
-#lims.get(entryList)
+##############################
+# ## new function to do it simpler (not in use)
+# lims.get <- function(entryList=entryList) {
+# 	
+# 	n <- list()
+# 	for (i in 1:length(entryList)) {
+# 		n <- c(n, unlist(setdiff(names(entryList[[i]]),n)))
+# 	}
+# 	
+# 	for (i in 1:length(n)) {
+# 		for (j in 1:length(entryList)) {
+# 			if (length(entryList[[j]][[i]]) == 1) {
+# 				if (length(entryList[[j]][[i]][[1]]) == 1) {
+# 					lims.loopAppend(unlist(entryList[[j]][[i]]),'res')
+# 				} else {
+# 					lims.loopAppend("list",'res')
+# 				}
+# 			} else {
+# 				lims.loopAppend(NA,'res')
+# 			}
+# 		}
+# 	}
+# 	
+# 	t <- as.matrix(res)
+# 	dim(t) <- c(length(entryList),length(n))
+# 	t <- data.frame(t)
+# 	colnames(t) <- n
+# 	return(t)
+# }
+# #remove(res)
+# #lims.get(entryList)
 
 
 
