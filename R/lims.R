@@ -47,9 +47,9 @@ lims.spectraCreator <- function(spec,type='nmr',mask=NULL) {
 	x_min <- range(spec[[1]])[1]
 	x_max <- range(spec[[1]])[2]
 	y <- spec[[2]]
-
+	
 	lines=list() # todo retrieve nmrLines if exist on lims
-
+	
 	if (is.null(mask)) {
 		mask  <- rep(TRUE,length.out=length(y))
 	}
@@ -59,10 +59,10 @@ lims.spectraCreator <- function(spec,type='nmr',mask=NULL) {
 				 ir=spectra  <- list('type'=type,'intensity'=rev(y),'xlims'=range(spec[[1]]),'irLines'=lines,'mask'=mask),
 				 gcms=,
 				 'not defined yet'
-				 )
+	)
 	
 	class(spectra) <- 'spectra'
-
+	
 	return(spectra)
 }
 
@@ -149,7 +149,7 @@ plot.spectra <- function(x,...) {
 
 ##############################
 lims.spectra.setMask <- function(spectraVarName,list=list()) {
-
+	
 	spectra <- get(spectraVarName,envir = .GlobalEnv)
 	if (class(spectra) != 'spectra') {
 		stop('Spectra is not of class spectra, please check!')
@@ -186,10 +186,10 @@ lims.spectra.setMask <- function(spectraVarName,list=list()) {
 			}
 		}
 	}
-
+	
 	spectra$mask <- as.logical(I)
 	assign(spectraVarName,spectra,envir = .GlobalEnv)
-
+	
 }
 
 #example
@@ -227,7 +227,7 @@ lims.getJSON<-function(url,LOG=FALSE,...) {
 			return(json_data)	
 		}
 	} else {stop('Please provide url as a vector!')}
-
+	
 }
 
 #example:
@@ -239,7 +239,7 @@ lims.getJSON<-function(url,LOG=FALSE,...) {
 
 # url <- c(url1,url2,url3,url4,url5)
 # g1 <- lims.getJSON('http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ')
-# entryList <- lims.getJSON(url)
+# entryList <- lims.getJSON(url1)
 
 ##############################
 lims.getParametersNames <- function(jsonList) {
@@ -255,27 +255,27 @@ lims.getParametersNames <- function(jsonList) {
 
 ##############################
 lims.getParameters <- function(entryList) {
-
+	
 	param <- lapply(entryList, function(x) if (length(x$parameters) > 0)
-					{data.frame("entryID"=x$entryID, sapply(x$parameters, 
-					function(y) if (y$description == "") { warning(paste('empty parameter description:',x$entryID)); eval(parse(text=paste('data.frame("',"unknown",'"=y$value)',sep=''))) }
-					else {eval(parse(text=paste('data.frame("',I(y$description),'"=y$value)',sep='')))} ))} 
-					else {data.frame("entryID"=x$entryID)})
+	{data.frame("entryID"=x$entryID, sapply(x$parameters, 
+																					function(y) if (y$description == "") { warning(paste('empty parameter description:',x$entryID)); eval(parse(text=paste('data.frame("',"unknown",'"=y$value)',sep=''))) }
+																					else {eval(parse(text=paste('data.frame("',I(y$description),'"=y$value)',sep='')))} ))} 
+	else {data.frame("entryID"=x$entryID)})
 	param <- Reduce(function(x,y) merge(x,y,all=TRUE),param)
-
+	
 	keywords <- lapply(entryList, function(x) if (length(x$keywords) > 0) 
-				{data.frame("entryID"=x$entryID, "keywords"=sapply(x$keywords, 
-				function(y) data.frame(y$value)))} else {data.frame("entryID"=x$entryID)})
+	{data.frame("entryID"=x$entryID, "keywords"=sapply(x$keywords, 
+																										 function(y) data.frame(y$value)))} else {data.frame("entryID"=x$entryID)})
 	keywords <- Reduce(function(x,y) merge(x,y,all=TRUE),keywords)
-
+	
 	iupacs <- lapply(entryList, function(x) if (length(x$iupacs) > 0) 
-				{data.frame("entryID"=x$entryID, "iupacs"=sapply(x$iupacs, 
-				function(y) data.frame(y$value)))} else {data.frame("entryID"=I(x$entryID))})
+	{data.frame("entryID"=x$entryID, "iupacs"=sapply(x$iupacs, 
+																									 function(y) data.frame(y$value)))} else {data.frame("entryID"=I(x$entryID))})
 	iupacs <- Reduce(function(x,y) merge(x,y,all=TRUE),iupacs)
-
+	
 	infos <- lapply(entryList, function(x) data.frame("entryID"=x['entryID'], "catalogID"=I(x$catalogID),
-				"batchID"=I(x$batchID), "creationDate"=I(x$creationDate),
-				"userEmail"=I(x$user$email),"lastModificationDate"=I(x$lastModificationDate)))
+																										"batchID"=I(x$batchID), "creationDate"=I(x$creationDate),
+																										"userEmail"=I(x$user$email),"lastModificationDate"=I(x$lastModificationDate)))
 	infos <- Reduce(function(x,y) merge(x,y,all=TRUE),infos)
 	
 	# do some cleanup
@@ -286,12 +286,12 @@ lims.getParameters <- function(entryList) {
 			param[,i][is.na(param[,i])] <- ""
 		}
 	}
-
+	
 	for (i in 1:ncol(keywords)) {
 		levels(keywords[,i]) <- c(levels(keywords[,i]),"")
 		keywords[,i][is.na(keywords[,i])] <- ""
 	}
-
+	
 	for (i in 1:ncol(iupacs)) {
 		levels(iupacs[,i]) <- c(levels(iupacs[,i]),"")
 		iupacs[,i][is.na(iupacs[,i])] <- ""
@@ -331,7 +331,7 @@ lims.getNmrs <- function(entryList=entryList,...) {
 	} else {
 		LOG <- FALSE
 	}
-
+	
 	if (!is.na(match('dry',names(argList)))) {
 		dry <- argList$dry
 	} else {
@@ -343,7 +343,7 @@ lims.getNmrs <- function(entryList=entryList,...) {
 	} else {
 		OP <- 'AND'
 	}
-
+	
 	if (!is.na(match('Filter',names(argList)))) {
 		Filter <- argList$Filter
 	} else {
@@ -359,57 +359,57 @@ lims.getNmrs <- function(entryList=entryList,...) {
 		warning('lims.getNmrs: some names in parameter filter are not correct, please check')
 	}
 	
-	for (i in 1:length(entryList)) {
-		x <- entryList[[i]]
-		
-		for (j in 1:length(x$nmrs)) {
-			y <- x$nmrs[[j]]
-			
-			z <- NULL
-			for (i in 1:length(Filter)) {
-				zt <- paste('!is.na(match(y[names(Filter)[',i,']],Filter[[',i,']]))',sep='')
-				if (is.null(z)) {
-					z <- zt
-				} else {
-					if (OP == 'AND') {
-						z  <- paste(z,zt,sep=' & ')
-					} else if (OP == 'OR') {
-						z  <- paste(z,zt,sep=' | ')
-					}
-				}
-			}
-			
-			if (eval(parse(text=z))) { # test for filter
-				
-				# retrieve spectra and store them as a list to avoid dimension problems
-				if (!dry) {
-					spect <- read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
-					s <- rbind(s, list('spectra'=lims.spectraCreator(spect[1:(dim(spect)[1]/2),] ))) # taking only real part of spectrum
-					if (LOG) {
-						msg <- paste('spectra: ',x$entryID,' / ', y$resourceURL,sep='')
-						lims.log(prefix='        ',scriptName=functionName,msg=msg,file=argList$logfile)
+	if (length(entryList) > 0) {
+		for (i in 1:length(entryList)) {
+			x <- entryList[[i]]
+			if (length(x$nmrs) > 0) {
+				for (j in 1:length(x$nmrs)) {
+					y <- x$nmrs[[j]]
+					
+					z <- NULL
+					for (i in 1:length(Filter)) {
+						zt <- paste('!is.na(match(y[names(Filter)[',i,']],Filter[[',i,']]))',sep='')
+						if (is.null(z)) {
+							z <- zt
+						} else {
+							if (OP == 'AND') {
+								z  <- paste(z,zt,sep=' & ')
+							} else if (OP == 'OR') {
+								z  <- paste(z,zt,sep=' | ')
+							}
+						}
 					}
 					
-				}
-				# merge infos
-				if (!is.na(match('entryData',names(argList)))) {
-					entryData = argList$entryData
-					p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
-					info  <- rbind(info, entryData$info[entryData$info$entryID == x$entryID,])
-					t <- rbind(t,list(
-						'entryID'=x$entryID,
-						'experiment'=y$experiment,
-						'temperature'=y$temperature,
-						'nucleus'=y$nucleus,
-						'solvent'=y$solvent,	
-						'resourceURL'=y$resourceURL
-					))
-				}
-			}
-			
-			
-		}
-	}
+					if (eval(parse(text=z))) { # test for filter
+						
+						# retrieve spectra and store them as a list to avoid dimension problems
+						if (!dry) {
+							spect <- read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
+							s <- rbind(s, list('spectra'=lims.spectraCreator(spect[1:(dim(spect)[1]/2),] ))) # taking only real part of spectrum
+							if (LOG) {
+								msg <- paste('spectra: ',x$entryID,' / ', y$resourceURL,sep='')
+								lims.log(prefix='        ',scriptName=functionName,msg=msg,file=argList$logfile)
+							}
+							
+						}
+						# merge infos
+						if (!is.na(match('entryData',names(argList)))) {
+							entryData = argList$entryData
+							p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
+							info  <- rbind(info, entryData$info[entryData$info$entryID == x$entryID,])
+							t <- rbind(t,list(
+								'entryID'=x$entryID,
+								'experiment'=y$experiment,
+								'temperature'=y$temperature,
+								'nucleus'=y$nucleus,
+								'solvent'=y$solvent,	
+								'resourceURL'=y$resourceURL
+							))
+						}
+					}
+				}} #nmrs
+		}} #entry
+	
 	# returns nmrData
 	if (!dry) {
 		return(list('spectra'=s,'nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
@@ -420,7 +420,7 @@ lims.getNmrs <- function(entryList=entryList,...) {
 #example
 # Filter <- list('experiment'=c('zg30','noesygpps1dcomp'),'solvent'=c('C6D6','COFFEEmeoh'))
 # Filter <- list('experiment'=c('noesygpps1dcomp'),'solvent'=c('COFFEEmeoh'))
-# nmrList <- lims.getNmrs(entryList,entryData,Filter=Filter,OP='AND')
+# nmrList <- lims.getNmrs(entryList,entryData=entryData,Filter=Filter,OP='AND')
 
 
 ##############################
@@ -450,13 +450,13 @@ lims.createDataSet <- function(nmrList) {
 
 ##############################
 lims <- function(urlList,experimentList=list(),...) {
-
+	
 	# retrieve optional arguments
 	argList<-list(...)
 	
 	today <- lims.getDate()$date
 	logfile <- paste(today,'_lims.log',sep='')
-
+	
 	entryList <- lims.getJSON(urlList,LOG=FALSE)
 	
 	# this will produce a warning if empty parameter description (not necessary)
@@ -470,14 +470,14 @@ lims <- function(urlList,experimentList=list(),...) {
 	}
 	
 	entryData <- lims.getParameters(entryList)
-
+	
 	#spect <- read.table(sprintf("%s&filter=JcampToXY",entryList[[1]]$nmrs[[1]]$resourceURL),sep=',',colClasses='numeric')
 	#Filter <- list('experiment'=c('zg30','noesygpps1dcomp'),'solvent'=c('C6D6','COFFEEmeoh'))
 	Filter <- list('experiment'=experimentList)
-	nmrList <- lims.getNmrs(entryList,entryData,Filter=Filter,OP='AND',dry=FALSE,LOG=TRUE,logfile=logfile)
-
+	nmrList <- lims.getNmrs(entryList,entryData=entryData,Filter=Filter,OP='AND',dry=FALSE,LOG=TRUE,logfile=logfile)
+	
 	data <- lims.createDataSet(nmrList)
-
+	
 	return(data)
 }
 

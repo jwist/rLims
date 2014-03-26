@@ -50,7 +50,7 @@ entryData <- lims.getParameters(entryList)
 lims.findExperimentNames(entryList)
 lims.findSolventNames(entryList)
 Filter <- list('experiment'=c('noesygpps1dcomp'),'solvent'=c('COFFEEmeoh'))
-nmrList <- lims.getNmrs(entryList,entryData,Filter=Filter,OP='AND')
+nmrList <- lims.getNmrs(entryList,entryData=entryData,Filter=Filter,OP='AND')
 }
 
 \keyword{ lims }
