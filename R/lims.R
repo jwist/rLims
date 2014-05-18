@@ -1,4 +1,53 @@
 
+# #Make generic function
+# # This is the "constructor" function...
+# # ... UseMethod should have the name of the function!
+# f <- function(x,...) UseMethod("f")
+# 
+# #Default method
+# # ... The class name should be the same as the constructor
+# f.default <- function(a,b=5,c=3,...){
+# 	out <- a+b+c
+# 	class(out) <- "f"
+# 	out # must return the object out, not the class name!
+# }
+# 
+# # Print method
+# # The "f" part of "print.f" must be the same as the class!
+# print.f <- function(x,...){
+# 	cat("Result for f: ")
+# 	print(unclass(x)) # Must unclass to avoid infinite recursion
+# 	# NextMethod(x) # Alternative, but prints the class attribute...
+# }
+# 
+# # Summary method
+# # Should return a summary object (and not print it!)
+# # Need a unique class for it ("fsummary")
+# summary.f <- function(object,...){
+# 	res <- object
+# 	class(res) <- "fsummary"
+# 	res
+# }
+# 
+# # Now need to print the summary too:
+# print.fsummary <- function(x, ...) {
+# 	cat("f summary!\n")
+# 	# Nice summary print goes here...
+# }
+# 
+# # Plot method
+# plot.f <-function(x,p=0.3,...){ cat("PLOTTING!\n") }
+# 
+# # Try it out:
+# 
+# x <- f(3)
+# x # print x
+# 
+# y <- summary(x) # 
+# y # print summary
+# 
+# plot(x)
+
 ##############################
 #### GENERAL FUNCTIONS ####
 
@@ -134,11 +183,11 @@ plot.spectra <- function(x,...) {
 	switch(spectra$type, 
 				 nmr={
 				 	plot(x,(y),type='n',ylab='intensity',xlab='ppm',xlim=rev(xlimit), ylim=ylimit)
-				 	lines(x,(y),col=1,xlim=rev(xlimit),ylim=ylimit)
+				 	lines(x,(y),xlim=rev(xlimit),ylim=ylimit,...) ## the tree dots must go in order to allow for passing generic parameters
 				 }, 
 				 ir={
 				 	plot(x,(y),type='n',ylab='intensity',xlab='frequency',xlim=xlimit, ylim=ylimit)
-				 	lines(x,(y),col=1,xlim=xlimit,ylim=ylimit)				 	
+				 	lines(x,(y),xlim=xlimit,ylim=ylimit,...)				 	
 				 }, 
 				 gcms=, 
 				 'not defined yet')
