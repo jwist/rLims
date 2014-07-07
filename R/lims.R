@@ -122,7 +122,7 @@ lims.spectraCreator <- function(spec,type='nmr',mask=NULL) {
 # example 2
 # logfile <- 'lims.log'
 # 
-# entry <- lims.getJSON('http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ')
+# entry <- lims.JSON.getEntry('http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ')
 #
 # spect <- read.table(sprintf("%s&filter=JcampToXY",entry[[1]]$nmrs[[1]]$resourceURL),sep=',',colClasses='numeric')
 # spectra <- lims.spectraCreator(spec)
@@ -253,30 +253,73 @@ lims.spectra.setMask <- function(spectraVarName,list=list()) {
 # plot(s)
 
 
-##############################
+##%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #### LIMS FUNCTIONS ####
-##############################
+##%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-##############################
-lims.getJSON<-function(url,LOG=FALSE,...) {
+lims.isArg <- function(arg,argList) {
+	!is.na(match(arg,names(argList)))
+}
+
+## this function get all the entries in a user account and returns a list of URL that can be retrieved with
+## the function lims.JSON.getEntry
+lims.JSON.getUserEntries <- function(...) {
 	
-	scriptName <- 'getJSON'
 	argList<-list(...)
 	
-	if ( is.vector(url) & !is.list(url) ){
-		if (length(url) == 0) {
-			stop(paste('Please provide at least one url!'))
+	if ( length(names(argList)) == 0 ) {
+		stop("Not enough arguments for function lims.JSON.getUserEntries. Provides the url for the user")
+		
+  } else if ( lims.isArg('url',argList) ) {
+		url <- argList$url
+		
+	} else if ( lims.isArg('account',argList) ) {
+		if ( is.na(pmatch('http://',argList$account$server)) ) {
+			url=paste('http://',argList$account$server,'/lims/default/sample/listJson.jsp?&queryUser=',argList$account$user,'&key=',argList$account$key,sep='')
 		} else {
-			#json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[i],warn=FALSE), collapse="")) ,'url'=url[i])) # retrieve JSON
-			json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[i],warn=FALSE), collapse=""))[[1]][[1]] ,'url'=url[i])) # retrieve JSON
-			if (LOG) {
-				msg <- paste("retrieved: ",length(json_data)," json" )
-				lims.log(prefix='        ',scriptName=scriptName,msg=msg,file=argList$logfile)
-			}
-			return(json_data)	
+			url=paste(argList$account$server,'/lims/default/sample/listJson.jsp?&queryUser=',argList$account$user,'&key=',argList$account$key,sep='')
 		}
-	} else {stop('Please provide url as a vector!')}
+	}
+		
+	#url=paste('http://mylims.univalle.edu.co/lims/default/sample/listJson.jsp?&queryUser=',user,'&key=PDfEZzKo3K',sep='')
+	t <- fromJSON(paste(readLines(url), collapse=""))[[1]]
+	#urlList <- sapply(t,function(x) x$entryDetails)
+	urlList <- lapply(t,function(x) x$entryDetails)
+	return(urlList)
+}
+
+## examples
+#lims.JSON.getUserEntries(url='http://mylims.univalle.edu.co/lims/default/sample/listJson.jsp?&queryUser=jessica.medina@correounivalle.edu.co&key=PDfEZzKo3K')
+#lims.JSON.getUserEntries(account=list(server='http://mylims.univalle.edu.co',user='jessica.medina@correounivalle.edu.co',key='PDfEZzKo3K'))
+#lims.JSON.getUserEntries(account=list(server='mylims.univalle.edu.co',user='jessica.medina@correounivalle.edu.co',key='PDfEZzKo3K'))
+
+##%%%%%%%%%%%%
+
+## this function gets JSON from a list of entry URL
+## it should be renamed lims.JSON.getEntry
+lims.JSON.getEntry<-function(url,LOG=FALSE,...) {
 	
+	scriptName <- 'lims.JSON.getEntry'
+	argList<-list(...)
+	
+	if (length(url) == 0) {
+		stop(paste('Please provide at least one url!'))
+		
+	} else if ( is.vector(url) && !is.list(url) ) {
+		#json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[i],warn=FALSE), collapse="")) ,'url'=url[i])) # retrieve JSON
+		json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[i],warn=FALSE), collapse=""))[[1]][[1]] ,'url'=url[i])) # retrieve JSON
+		
+	} else if ( is.list(url) ) {
+		#stop('Please provide url as a vector!')
+		json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[[i]],warn=FALSE), collapse=""))[[1]][[1]] ,'url'=url[i])) # retrieve JSON
+	}
+	
+	if (LOG) {
+		msg <- paste("retrieved: ",length(json_data)," json" )
+		lims.log(prefix='        ',scriptName=scriptName,msg=msg,file=argList$logfile)
+	}	
+	
+	return(json_data)	
 }
 
 #example:
@@ -287,39 +330,122 @@ lims.getJSON<-function(url,LOG=FALSE,...) {
 # url5 <- 'http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=6528214&key=NK2pYSFIhD'
 
 # url <- c(url1,url2,url3,url4,url5)
-# g1 <- lims.getJSON('http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ')
-# entryList <- lims.getJSON(url1)
+# g1 <- lims.JSON.getEntry('http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8026534&key=5quA7vBcoQ')
+# entryList <- lims.JSON.getEntry(url1)
 
-##############################
+##%%%%%%%%%%%%
+
+## this function retrieves the whole entries for user.
+lims.getUserEntries <- function(...) {
+	argList <- list(...)
+	entryList <- lims.JSON.getUserEntries(account=argList$account)
+	lims.JSON.getEntry(entryList)
+}
+
+##%%%%%%%%%%%%
+
+## this function returns the list of available resources for entryList. 
+## Should be in list format ex[1] and not ex[[1]]
+lims.listResources <- function(entryList) {
+	
+	if ( length(entryList) == 0 ) {
+		stop("Please provide at leaste one entry")
+		
+	} else if ( length(entryList) == 1 ) {
+		return(names(entryList[[1]]))
+		
+  } else {
+  	dups <- length(unique(lapply(entryList,function(x) names(x) )))
+  	if ( dups == 1 ) {
+  		return(names(entryList[[1]]))
+  	} else {
+  		a = NULL
+  		for ( i in 1:dups ) {
+  			a <- unique(c(a,names(entryList[[i]])))
+  		}
+  	}
+  	return(a)
+  }
+}
+
+## examples
+##lims.listResources(entryList[[38]])
+
+##%%%%%%%%%%%%
+
+lims.getResource <- function(entryList,resources=c("batchID","catalogID")) {
+	
+	fun <- function(x) {ifelse(is.null(x[i][[1]]),NA,x[i][[1]])}
+	
+	for ( i in resources ) {
+		
+		tmp_res <- unlist( lapply(entryList, fun) )
+		if ( sum(is.na(tmp_res)) != 0 ) { warning(paste("NA found in resource: ",i)) }
+		ifelse( !exists('resource'), resource <- tmp_res, resource <- cbind(resource,tmp_res) )
+	}
+	
+	if ( length(resources) > 1) {
+		colnames(resource) <- resources
+	}
+	
+	return(resource)
+}
+
+##%%%%%%%%%%%%
+
+lims.getAllResource <- function(entryList) {
+	
+	resources <- c("entryID","catalogID","batchID","creationDate","user")
+		
+	fun <- function(x) {ifelse(is.null(x[i][[1]]),NA,x[i][[1]])}
+	
+	for ( i in resources ) {
+		
+		tmp_res <- unlist( lapply(entryList, fun) )
+		if ( sum(is.na(tmp_res)) != 0 ) { warning(paste("NA found in resource: ",i)) }
+		ifelse( !exists('resource'), resource <- tmp_res, resource <- cbind(resource,tmp_res) )
+	}
+	
+	if ( length(resources) > 1) {
+		colnames(resource) <- resources
+	}
+	
+	return(resource)
+}
+
+##%%%%%%%%%%%%
+
+## this function checks if parameters exist and then returns their names
 lims.getParametersNames <- function(jsonList) {
 	msg <- 'Check your parameters, some have empty descriptions, entryID='
 	#G <- sapply(jsonList,function(x) sapply(x$parameters, function(y) y$description))
 	G <- sapply(jsonList,function(x) sapply(x$parameters, function(y) 
-		if (y$description=="") {warning(paste(msg,x$entryID,sep='')); y$description} else {y$description} ))
+	if (y$description=="") {warning(paste(msg,x$entryID,sep='')); y$description} else {y$description} ))
 	G <- unique(unlist(G))
 	return(G) # returns a list of entries
 }
 #example:
 # parameterNames <- lims.getParametersNames(entryList)
 
-##############################
+##%%%%%%%%%%%%
+
 lims.getParameters <- function(entryList) {
 	
 	param <- lapply(entryList, function(x) if (length(x$parameters) > 0)
-	{data.frame("entryID"=x$entryID, sapply(x$parameters, 
-																					function(y) if (y$description == "") { warning(paste('empty parameter description:',x$entryID)); eval(parse(text=paste('data.frame("',"unknown",'"=y$value)',sep=''))) }
-																					else {eval(parse(text=paste('data.frame("',I(y$description),'"=y$value)',sep='')))} ))} 
-	else {data.frame("entryID"=x$entryID)})
+			{data.frame("entryID"=x$entryID, sapply(x$parameters, 
+			function(y) if (y$description == "") { warning(paste('empty parameter description:',x$entryID)); eval(parse(text=paste('data.frame("',"unknown",'"=y$value)',sep=''))) }
+			else {eval(parse(text=paste('data.frame("',I(y$description),'"=y$value)',sep='')))} ))} 
+			else {data.frame("entryID"=x$entryID)})
 	param <- Reduce(function(x,y) merge(x,y,all=TRUE),param)
 	
 	keywords <- lapply(entryList, function(x) if (length(x$keywords) > 0) 
-	{data.frame("entryID"=x$entryID, "keywords"=sapply(x$keywords, 
-																										 function(y) data.frame(y$value)))} else {data.frame("entryID"=x$entryID)})
+			{data.frame("entryID"=x$entryID, "keywords"=sapply(x$keywords, 
+			function(y) data.frame(y$value)))} else {data.frame("entryID"=x$entryID)})
 	keywords <- Reduce(function(x,y) merge(x,y,all=TRUE),keywords)
 	
 	iupacs <- lapply(entryList, function(x) if (length(x$iupacs) > 0) 
-	{data.frame("entryID"=x$entryID, "iupacs"=sapply(x$iupacs, 
-																									 function(y) data.frame(y$value)))} else {data.frame("entryID"=I(x$entryID))})
+			{data.frame("entryID"=x$entryID, "iupacs"=sapply(x$iupacs, 
+			function(y) data.frame(y$value)))} else {data.frame("entryID"=I(x$entryID))})
 	iupacs <- Reduce(function(x,y) merge(x,y,all=TRUE),iupacs)
 	
 	infos <- lapply(entryList, function(x) data.frame("entryID"=x['entryID'], "catalogID"=I(x$catalogID),
@@ -354,22 +480,97 @@ lims.getParameters <- function(entryList) {
 # filter out index
 #lapply(seq_along(g2), function(i) if (!is.na(match(i,index))) {g2[[i]]})
 
+##%%%%%%%%%%%%
 
-##############################
+## this function organize all the data in a user account
+## filtering the samples should be done here
+lims.getUserSamplesMetaData <- function(...) {
+	argList <- list(...)
+	entries <- lims.getUserEntries(account=argList$account)
+	entryData <- lims.getParameters(entries)
+	
+	lims.findExperimentNames(entries)
+	lims.findSolventNames(entries)
+	lims.findNucleusType(entries)
+	lims.findByTemperature(entries)
+	lims.findNumberOfSpectra(entries)
+	
+	## we have to sort the row because Reduce/Merge pair function in getParameters 
+	## shuffles the rows
+	F <- match(entryData$params$entryID,lims.getResource(entries,c("entryID")))
+	entries <- entries[F]
+	return(res=list("samples"=entries,"metaData"=entryData))
+}
+
+##%%%%%%%%%%%%
+
+lims.selectSamples <- function(userData,index,exclude=FALSE) {
+	userData$samples <- userData$samples[index]
+	
+	if ( exclude == TRUE ) { index <- -index }
+	
+	for ( i in c("infos","params","iupacs","keywords") ) {
+		if (ncol(userData$metaData[i][[1]]) == 1) {
+			userData$metaData[i][[1]] <- userData$metaData[i][[1]][[1]][index]
+		} else {
+			userData$metaData[i][[1]] <- userData$metaData[i][[1]][index,]
+		}
+	}
+	
+	return(userData)
+}
+
+##%%%%%%%%%%%%
+
 lims.findExperimentNames <- function(entryList) {
 	G <- lapply(entryList,function(x) lapply(x$nmrs, function(y) y$experiment))
+	print(paste("number of spectra ordered by experiment type:"))
+	print(table(unlist(G)))
 	G <- unique(unlist(G))
 	return(G)
 }
 
-##############################
+##%%%%%%%%%%%%
+
 lims.findSolventNames <- function(entryList) {
 	G <- lapply(entryList,function(x) lapply(x$nmrs, function(y) y$solvent))
+	print(paste("number of spectra ordered by solvents:"))
+	print(table(unlist(G)))
 	G <- unique(unlist(G))
 	return(G)
 }
 
-##############################
+##%%%%%%%%%%%%
+
+lims.findNucleusType <- function(entryList) {
+	G <- lapply(entryList,function(x) lapply(x$nmrs, function(y) y$nucleus))
+	print(paste("number of spectra ordered by nucleus:"))
+	print(table(unlist(G)))
+	G <- unique(unlist(G))
+	return(G)
+}
+
+##%%%%%%%%%%%%
+
+lims.findByTemperature <- function(entryList) {
+	G <- lapply(entryList,function(x) lapply(x$nmrs, function(y) y$temperature))
+	print(paste("number of spectra ordered by temperature:"))
+	print(table(unlist(G)))
+	G <- unique(unlist(G))
+	return(G)
+}
+
+##%%%%%%%%%%%%
+
+lims.findNumberOfSpectra <- function(entryList) {
+	G <- lapply(entryList,function(x) lapply(x$nmrs, function(y) y$resourceURL))
+	G <- length(unique(unlist(G)))
+	print(paste("total number of spectra: ",G))
+	return(G)
+}
+
+##%%%%%%%%%%%%
+
 lims.getNmrs <- function(entryList=entryList,...) {
 	
 	functionName <- 'lims.getNmrs'
@@ -471,8 +672,116 @@ lims.getNmrs <- function(entryList=entryList,...) {
 # Filter <- list('experiment'=c('noesygpps1dcomp'),'solvent'=c('COFFEEmeoh'))
 # nmrList <- lims.getNmrs(entryList,entryData=entryData,Filter=Filter,OP='AND')
 
+##%%%%%%%%%%%%
 
-##############################
+lims.getSpectra <- function(metaData=metaData,...) {
+	
+	entryList <- metaData$samples
+	entryData <- metaData$metaData
+	
+	functionName <- 'lims.getSpectra'
+	argList<-list(...)
+	
+	if (!is.na(match('LOG',names(argList)))) {
+		LOG <- argList$LOG
+	} else {
+		LOG <- FALSE
+	}
+	
+	if (!is.na(match('dry',names(argList)))) {
+		dry <- argList$dry
+	} else {
+		dry <- FALSE
+	}
+	
+	if (!is.na(match('OP',names(argList)))) {
+		OP <- argList$OP
+	} else {
+		OP <- 'AND'
+	}
+	
+	if (!is.na(match('Filter',names(argList)))) {
+		Filter <- argList$Filter
+	} else {
+		Filter <- list()
+	}
+	
+	t <- list()
+	s <- list()
+	p <- list()
+	info <- list()
+	
+	if (sum(is.na(match(names(Filter),names(entryList[[1]]$nmrs[[1]])))) != 0) {
+		warning('lims.getSpectra: some names in parameter filter are not correct, please check')
+	}
+	
+	if (length(entryList) > 0) {
+		for (i in 1:length(entryList)) {
+			x <- entryList[[i]]
+			if (length(x$nmrs) > 0) {
+				for (j in 1:length(x$nmrs)) {
+					y <- x$nmrs[[j]]
+					
+					z <- NULL
+					for (i in 1:length(Filter)) {
+						zt <- paste('!is.na(match(y[names(Filter)[',i,']],Filter[[',i,']]))',sep='')
+						if (is.null(z)) {
+							z <- zt
+						} else {
+							if (OP == 'AND') {
+								z  <- paste(z,zt,sep=' & ')
+							} else if (OP == 'OR') {
+								z  <- paste(z,zt,sep=' | ')
+							}
+						}
+					}
+					
+					if (eval(parse(text=z))) { # test for filter
+						
+						# retrieve spectra and store them as a list to avoid dimension problems
+						if (!dry) {
+							spect <- read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
+							s <- rbind(s, list('spectra'=lims.spectraCreator(spect[1:(dim(spect)[1]/2),] ))) # taking only real part of spectrum
+							if (LOG) {
+								msg <- paste('spectra: ',x$entryID,' / ', y$resourceURL,sep='')
+								lims.log(prefix='        ',scriptName=functionName,msg=msg,file=argList$logfile)
+							}
+							
+						}
+						# merge infos
+
+						p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
+						info  <- rbind(info, entryData$infos[entryData$infos$entryID == x$entryID,])
+						t <- rbind(t,list(
+							'entryID'=x$entryID,
+							'experiment'=y$experiment,
+							'temperature'=y$temperature,
+							'nucleus'=y$nucleus,
+							'solvent'=y$solvent,	
+							'resourceURL'=y$resourceURL
+						))
+						
+					}
+				}} #nmrs
+		}} #entry
+	
+	# returns nmrData
+	if (!dry) {
+		return(list('spectra'=s,'nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
+	} else {
+		return(list('nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
+	}
+}
+#example
+
+##%%%%%%%%%%%%
+
+lims.findSpectraSize <- function(data) {
+	return(sapply(data$spectra,function(x) length(x$intensity)))
+}
+
+##%%%%%%%%%%%%
+
 # this function creates data ready for analysis
 # 1) flatten spectra into spectra objects
 # 2) add relevant information
@@ -497,7 +806,8 @@ lims.createDataSet <- function(nmrList) {
 # example
 # data <- lims.createDataSet(nmrList)
 
-##############################
+##%%%%%%%%%%%%
+
 lims <- function(urlList,experimentList=list(),...) {
 	
 	# retrieve optional arguments
@@ -506,7 +816,7 @@ lims <- function(urlList,experimentList=list(),...) {
 	today <- lims.getDate()$date
 	logfile <- paste(today,'_lims.log',sep='')
 	
-	entryList <- lims.getJSON(urlList,LOG=FALSE)
+	entryList <- lims.JSON.getEntry(urlList,LOG=FALSE)
 	
 	# this will produce a warning if empty parameter description (not necessary)
 	#lims.getParametersNames(entryList)
@@ -529,6 +839,104 @@ lims <- function(urlList,experimentList=list(),...) {
 	
 	return(data)
 }
+
+#install.packages('devtools')
+# library(devtools)
+# install_github("jwist/rLims")
+# library(rLims)
+# url='http://mylims.univalle.edu.co/lims/default/sample/listJson.jsp?&queryUser=jessica.medina@correounivalle.edu.co&key=PDfEZzKo3K'
+# account <- list(server='mylims.univalle.edu.co',user='jessica.medina@correounivalle.edu.co',key='PDfEZzKo3K')
+# entryList <- lims.JSON.getUserEntries(url=url)
+# entries <- lims.JSON.getEntry(entryList)
+# entries <- lims.getUserEntries(account=account)
+# entryData <- lims.getParameters(entries) ## parameters are not ordered as sample
+# ## the following two lines are for ordering entries according to entryData
+# F <- match(entryData$params$entryID,lims.getResource(entries,c("entryID")))
+# entries <- entries[F]
+# userData <- list("samples"=entries,"metaData"=entryData)
+# userData <- lims.getUserSamplesMetaData(account=account)
+# Filter <- list('experiment'=c('noesygpps1dcomp'))
+# nmrList <- lims.getNmrs(entries,entryData=entryData,Filter=Filter,OP='AND',dry=FALSE)
+# 
+# 
+# url='http://mylims.univalle.edu.co/lims/default/sample/listJson.jsp?&queryUser=jessica.medina@correounivalle.edu.co&key=PDfEZzKo3K'
+# metaData <- lims.getUserSamplesMetaData(url=url)
+# 
+# 
+# account <- list(server='mylims.univalle.edu.co',user='jessica.medina@correounivalle.edu.co',key='PDfEZzKo3K')
+# metaData <- lims.getUserSamplesMetaData(account=account)
+# metaData <- lims.selectSamples(metaData,c(6:8))
+# lims.findExperimentNames(metaData$samples)
+# Filter <- list('experiment'=c('noesygpps1dcomp'))
+# data <- lims.getSpectra(metaData, Filter=Filter,OP='AND',dry=FALSE)
+# lims.findSpectraSize(data) ## check size of spectra before creating the dataset
+# dataSet <- lims.createDataSet(data)
+
+
+#### DISPLAY FUNCTIONS ####
+
+
+diffplot <- function(index=ppm,data=nmrData,png=NULL,...) {
+	
+	# get arguments 
+	args <- as.list( sys.call() ) # get names
+	argList<-list(...) # get args
+	print(nrow(data))
+	ifelse(is.null(args$main), title <- "" , title <- argList$main)
+	ifelse(is.null(args$sub), caption <- "" , caption <- argList$sub)
+	if (is.null(args$xlab)) { args$xlab <- "Chemical Shift [ppm]" }
+	if (is.null(args$ylab)) { args$ylab <- "Relative Intensity" }
+	if (is.null(args$col)) {
+		if (is.null(nrow(data))) { 
+			group <- 1 
+		} else {
+			group <- (c(1:nrow(data)) %% 9 ) + 1
+		}
+	} else {
+		group = argList$col
+	}
+	
+	# print
+	ifelse(is.null(args$xlim), limitsx <- range(ppm) , limitsx <- argList$xlim)
+	
+	#  png(paste("./images/noise_",log,"_",param$name[i],".png",sep=""), bg="transparent", width=700, height=300)
+	F <- index > min(limitsx) & index < max(limitsx)
+	
+	if (is.null(nrow(data))) {
+		ifelse(is.null(args$ylim), limitsy <- range(c(min(data[F]),max(data[F])*1.3)) , limitsy <- argList$ylim)
+		matplot(index[F],data[F], type="l",ylim=limitsy,xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(index[F])),main=title,sub=caption,cex.sub=0.7,cex.main=0.8)
+	} else {
+		ifelse(is.null(args$ylim), limitsy <- range(c(min(data[,F]),max(data[,F])*1.3)) , limitsy <- argList$ylim)
+		matplot(index[F],t(data[,F]), type="l",ylim=limitsy,xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(index[F])),main=title,sub=caption,cex.sub=0.7,cex.main=0.8)
+	}
+	return(res=list('xlim'=limitsx,'ylim'=limitsy))
+}
+
+saveDevice <- function (fn) {
+	dev.copy(device= pdf, file=paste(fn, ".pdf", sep=""),
+					 width=7, height =5)
+	dev.off()
+	dev.copy(device= png, bg="transparent", file=paste(fn, ".png", sep=""),
+					 width=1000, height = 400)
+	dev.off()
+}
+
+# Examples
+# region <- c(0.65,1)
+# samples <- c(1,2,6)
+# color <- c('red','green','black')
+# main <- "Dominican Republic Study"
+# caption <- ""
+# par(mar=c(4.5,4.5,3,1))
+# 
+# res<-diffplot(limits,index=ppm,data=nmrData[samples,],xlim=region,col=color, sub=caption, main=main)
+# 
+# legend_txt  <- paste(color,": ",param$name[samples],param$name[samples],' ')
+# legend(max(res$xlim),max(res$ylim),legend_txt,cex=0.5)
+# 
+# saveDevice("./images/a1")
+
+
 
 ##############################
 # ## new function to do it simpler (not in use)
