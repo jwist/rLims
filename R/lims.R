@@ -789,6 +789,7 @@ lims.createDataSet <- function(nmrList) {
 	# check for dimension problem
 	t <- unlist(lapply(nmrList$spectra,function(x) dim(x)))
 	if (min(t) != max(t)) {
+		print(t)
 		stop('Cannot create data set, check size of spectra')
 	} else {
 		
@@ -869,48 +870,149 @@ lims <- function(urlList,experimentList=list(),...) {
 # lims.findExperimentNames(metaData$samples)
 # Filter <- list('experiment'=c('noesygpps1dcomp'))
 # data <- lims.getSpectra(metaData, Filter=Filter,OP='AND',dry=FALSE)
-# lims.findSpectraSize(data) ## check size of spectra before creating the dataset
 # dataSet <- lims.createDataSet(data)
 
 
 #### DISPLAY FUNCTIONS ####
 
-
-diffplot <- function(index=ppm,data=nmrData,png=NULL,...) {
+diffplot <- function(png=NULL,...) {
 	
 	# get arguments 
 	args <- as.list( sys.call() ) # get names
 	argList<-list(...) # get args
-	print(nrow(data))
+	
+	## check if using x and y or dataSata as input
+	if ( (is.null(args$y) && is.null(args$x)) && !is.null(args$data) ) { 
+		y <- argList$data$nmrData
+		x <- argList$data$ppm
+	} else if ( (!is.null(args$y) && !is.null(args$x)) && is.null(args$data) ) {
+		x <- argList$x
+		y <- argList$y
+	} else {
+		stop("Please check your input, there is a problem with your definition of x and y")
+	}
+	
 	ifelse(is.null(args$main), title <- "" , title <- argList$main)
-	ifelse(is.null(args$sub), caption <- "" , caption <- argList$sub)
 	if (is.null(args$xlab)) { args$xlab <- "Chemical Shift [ppm]" }
 	if (is.null(args$ylab)) { args$ylab <- "Relative Intensity" }
 	if (is.null(args$col)) {
-		if (is.null(nrow(data))) { 
+		if (is.null(nrow(y))) { 
 			group <- 1 
 		} else {
-			group <- (c(1:nrow(data)) %% 9 ) + 1
+			group <- (c(1:nrow(y)) %% 9 ) + 1
 		}
 	} else {
 		group = argList$col
 	}
 	
+	## if groupBy is defined we overwrite the col argument
+	if ( !is.null(args$groupBy) ) {
+		if ( !is.null(args$col) ) {
+			warning("col arguments has been overwritten by groupBy argument")
+		}
+		group <- argList$data$param[argList$groupBy]
+	}
+	
 	# print
-	ifelse(is.null(args$xlim), limitsx <- range(ppm) , limitsx <- argList$xlim)
+	ifelse(is.null(args$limits), limits <- range(x) , limits <- argList$limits)
 	
 	#  png(paste("./images/noise_",log,"_",param$name[i],".png",sep=""), bg="transparent", width=700, height=300)
-	F <- index > min(limitsx) & index < max(limitsx)
-	
-	if (is.null(nrow(data))) {
-		ifelse(is.null(args$ylim), limitsy <- range(c(min(data[F]),max(data[F])*1.3)) , limitsy <- argList$ylim)
-		matplot(index[F],data[F], type="l",ylim=limitsy,xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(index[F])),main=title,sub=caption,cex.sub=0.7,cex.main=0.8)
+	F <- x > min(limits) & x < max(limits)
+	if (is.null(nrow(y))) {
+		matplot(x[F],y[F], type="l",xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(x[F])),main=title)
 	} else {
-		ifelse(is.null(args$ylim), limitsy <- range(c(min(data[,F]),max(data[,F])*1.3)) , limitsy <- argList$ylim)
-		matplot(index[F],t(data[,F]), type="l",ylim=limitsy,xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(index[F])),main=title,sub=caption,cex.sub=0.7,cex.main=0.8)
+		matplot(x[F],t(y[,F]), type="l",xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(x[F])),main=title)
 	}
-	return(res=list('xlim'=limitsx,'ylim'=limitsy))
+	
 }
+
+#a few examples
+#diffplot(x=ppm,y=nmrData,col=c(rep(1,25),rep(2,25)))
+#diffplot(x=ppm,y=nmrData,limits=c(-5,-0.2),col=c(rep(1,25),rep(2,25)))
+#diffplot(x=ppm,y=nmrData,limits=c(12,14.5),col=c(rep(1,25),rep(2,25)))
+#diffplot(limits,x=ppm,y=nmrData,xlab="Chemical Shift [ppm]",ylab="Relative Intensity",col=col)
+#diffplot(data=dataSet,limits=c(6.5,8),col=c(1,2,3))
+
+getNoise <- function(limits,log=NULL) {
+	F <- ppm > min(limits) & ppm < max(limits)
+	#ppmOff<-ppm[F]
+	#nmrDataOff<-nmrData[,F]
+	offset <- apply(nmrData[,F],1,sum)/dim(nmrData[,F])[2]; names(offset) <- NULL
+	noise <- apply(nmrData[,F],1,sd); names(noise) <- NULL
+	
+	if (!is.null(log)) {
+		for (i in 1:nrow(nmrData)) {
+			png(paste("./images/noise_",log,"_",param$name[i],".png",sep=""), bg="transparent", width=700, height=300)
+			txt <- paste("Noise region (",param$name[i],"), N: ",round(noise[i],2)," / off: ",round(offset[i],2),sep="")
+			#diffplot(limits,index=ppm,data=nmrData[i,],limits=c(A,B),main=txt)
+			#abline(h = offset[i], col = 3, lwd=2) 
+			diffplot(limits,index=ppm,data=nmrData[i,]-offset[i],limits=limits,main=txt)
+			abline(h = 0, col = 3, lwd=2)
+			abline(h = noise[i], col = 2, lwd=2)
+			abline(h = -noise[i], col = 2, lwd=2)
+			abline(h = 3*noise[i], col = 4, lwd=2)
+			abline(h = -3*noise[i], col = 4, lwd=2)
+			dev.off()
+		}
+	}
+	return(res=list("offset"=offset,"noise"=noise))
+}
+
+
+##### integration #####
+
+
+integ <- function(A,B) {
+	F <- ppm > A & ppm < B
+	
+	diffplot(index=ppm[F],data=nmrData[,F])
+	
+	S <- c()
+	for (i in 1:nrow(nmrData)) {
+		G <- nmrData[i,F] > 3*noise[i]
+		S[i] <- sum(nmrData[i,F][G])
+	}
+	
+	plot(density(S))
+	
+	return(S)
+}
+
+# diffplot <- function(index=ppm,data=nmrData,png=NULL,...) {
+# 	
+# 	# get arguments 
+# 	args <- as.list( sys.call() ) # get names
+# 	argList<-list(...) # get args
+# 	print(nrow(data))
+# 	ifelse(is.null(args$main), title <- "" , title <- argList$main)
+# 	ifelse(is.null(args$sub), caption <- "" , caption <- argList$sub)
+# 	if (is.null(args$xlab)) { args$xlab <- "Chemical Shift [ppm]" }
+# 	if (is.null(args$ylab)) { args$ylab <- "Relative Intensity" }
+# 	if (is.null(args$col)) {
+# 		if (is.null(nrow(data))) { 
+# 			group <- 1 
+# 		} else {
+# 			group <- (c(1:nrow(data)) %% 9 ) + 1
+# 		}
+# 	} else {
+# 		group = argList$col
+# 	}
+# 	
+# 	# print
+# 	ifelse(is.null(args$xlim), limitsx <- range(ppm) , limitsx <- argList$xlim)
+# 	
+# 	#  png(paste("./images/noise_",log,"_",param$name[i],".png",sep=""), bg="transparent", width=700, height=300)
+# 	F <- index > min(limitsx) & index < max(limitsx)
+# 	
+# 	if (is.null(nrow(data))) {
+# 		ifelse(is.null(args$ylim), limitsy <- range(c(min(data[F]),max(data[F])*1.3)) , limitsy <- argList$ylim)
+# 		matplot(index[F],data[F], type="l",ylim=limitsy,xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(index[F])),main=title,sub=caption,cex.sub=0.7,cex.main=0.8)
+# 	} else {
+# 		ifelse(is.null(args$ylim), limitsy <- range(c(min(data[,F]),max(data[,F])*1.3)) , limitsy <- argList$ylim)
+# 		matplot(index[F],t(data[,F]), type="l",ylim=limitsy,xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(index[F])),main=title,sub=caption,cex.sub=0.7,cex.main=0.8)
+# 	}
+# 	return(res=list('xlim'=limitsx,'ylim'=limitsy))
+# }
 
 saveDevice <- function (fn) {
 	dev.copy(device= pdf, file=paste(fn, ".pdf", sep=""),
