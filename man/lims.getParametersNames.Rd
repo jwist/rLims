@@ -35,7 +35,7 @@ url1 <- 'http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8
 url2 <- 'http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8405946&key=MdmsufXhXk'
 
 url <- c(url1,url2)
-entryList <- lims.getJSON(url)
+entryList <- lims.JSON.getEntry(url)
 names <- lims.getParametersNames(entryList)
 }
 

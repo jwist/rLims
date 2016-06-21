@@ -29,12 +29,12 @@ See lims.spectraCreator and plot (generic function)
 }
 
 \examples{
-#example
+\dontrun{#example
 fake <- list(x=c(1:100),y=sin(seq(1,6.27,length.out=100)))
 s <- lims.spectraCreator(fake)
 plot(s)
 lims.spectra.setMask('s',list=c(10,20,40,50,80,100))
-plot(s)
+plot(s)}
 }
 
 \keyword{ lims }

@@ -11,7 +11,7 @@ This function allows to retrieve the names of the experiments for one or several
 }
 \arguments{
   \item{entryList}{
- an list of entries produced by lims.getJSON
+ an list of entries produced by lims.JSON.getEntry
 }
 }
 \details{
@@ -25,15 +25,14 @@ Julien Wist
 }
 
 \seealso{
-See package "rjson" and www.mylims.org. See also \link{lims.getJSON} and \link{lims.findSolventNames}.
+See package "rjson" and www.mylims.org. See also \code{\link{lims.JSON.getEntry}} and \code{\link{lims.findSolventNames}}.
 }
 
 \examples{
 #example:
-url <- 'http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=513117&key=cx9QmnDpDF'
-entryList <- lims.getJSON(url)
-lims.findExperimentNames(entryList)
-lims.findSolventNames(entryList)
+#url <- 'http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=513117&key=cx9QmnDpDF'
+#entryList <- lims.JSON.getEntry(url)
+#lims.findExperimentNames(entryList)
 }
 
 \keyword{ lims }

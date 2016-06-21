@@ -2,14 +2,17 @@ Package: rLims
 Type: Package
 Title: retrieve information stored in www.mylims.org spectroscopic database
 Version: 1.0
-Date: 2013-12-08
-Author: Julien Wist
+Date:2013-12-08
+Author: Julien Wist, Jessica Medina, Andres Bernal
 Maintainer: Julien Wist <julien.wist@gmail.com>
 Description: www.mylims.org is a databse for spectrospcopic data (NMR, MS, IR,
     GC-MS, etc.) that can be fed directly from the analytical devices (ex. Bruker
-    NMR Spectrometer. This package allows to create dataset from data stored in
-    the database for further analysis.
+    NMR Spectrometer. This package allows to create dataset from data stored in the
+    database for further analysis.
 License: GPL-3
 Depends:
-    R (>= 2.7.0),
-    rjson
+    R (>= 3.2),
+    rjson,
+    caret,
+    e1071
+

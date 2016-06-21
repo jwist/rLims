@@ -7,11 +7,14 @@ retrieves the experiments from an list of entries and returns a list of spectra 
 This function retrieves the experiments from an list of entries and returns a list of spectra objects.
 }
 \usage{
-	lims.getNmrs(entryList=entryList,...)
+	lims.getNmrs(entryList=entryList,factor,...)
 }
 \arguments{
   \item{entryList}{
- an list of entries produced by lims.getJSON
+ an list of entries produced by 
+}
+ \item{factor}{
+ if there is imaginary data factor=2, if is not factor=1 
 }
   \item{...}{
  Additional parameters:
@@ -25,7 +28,15 @@ This function retrieves the experiments from an list of entries and returns a li
  
  -dry: if true, only a dry run is performed but no real spectra is downloaded.
 }
-}
+ }
+
+  \value{
+  \item{info}{information about registration entry}
+  \item{nmrInfo}{acquisition parameters}
+  \item{param}{parameters of dataset}
+  \item{spectra}{list spectra}
+   }
+
 \references{
 www.mylims.org
 }
@@ -34,7 +45,7 @@ Julien Wist
 }
 
 \seealso{
-See package "rjson" and www.mylims.org. See also \link{lims.getJSON}.
+See package "rjson" and www.mylims.org. See also \code{\link{lims.JSON.getEntry}}.
 }
 
 \examples{
@@ -44,11 +55,8 @@ url1 <- 'http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8
 url2 <- 'http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=8405946&key=MdmsufXhXk'
 
 url <- c(url1,url2)
-entryList <- lims.getJSON(url)
-names <- lims.getParametersNames(entryList)
+entryList <- lims.JSON.getEntry(url)
 entryData <- lims.getParameters(entryList)
-lims.findExperimentNames(entryList)
-lims.findSolventNames(entryList)
 Filter <- list('experiment'=c('noesygpps1dcomp'),'solvent'=c('COFFEEmeoh'))
 nmrList <- lims.getNmrs(entryList,entryData=entryData,Filter=Filter,OP='AND')
 }

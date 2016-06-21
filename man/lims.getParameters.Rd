@@ -1,7 +1,7 @@
 \name{lims.getParameters}
 \alias{lims.getParameters}
 \title{
-retrieves the parameters for a list of entries and return a data.frame
+retrieves the parameters for a list of entries and returns a data.frame
 }
 \description{
 This function allows to retrieve the parameters of one or several entries and returns a data.frame.
@@ -11,7 +11,7 @@ This function allows to retrieve the parameters of one or several entries and re
 }
 \arguments{
   \item{entryList}{
- an list of entries produced by lims.getJSON
+ a list of entries produced by lims.JSON.getEntry
 }
 }
 \details{
@@ -25,16 +25,14 @@ Julien Wist
 }
 
 \seealso{
-See package "rjson" and www.mylims.org. See also \link{lims.getJSON}, \link{lims.findSolventNames} and \link{lims.findExperimentNames}.
+See package "rjson" and www.mylims.org. See also \code{\link{lims.JSON.getEntry}}, \code{\link{lims.findSolventNames}} and \code{\link{lims.findExperimentNames}}.
 }
 
 \examples{
 
 #example:
 url <- 'http://mylims.univalle.edu.co/lims/Lims?action=GetJSON&table=entry&id=1144728&key=QpOcIBAE2M'
-entryList <- lims.getJSON(url)
-lims.findExperimentNames(entryList)
-lims.findSolventNames(entryList)
+entryList <- lims.JSON.getEntry(url)
 param <- lims.getParameters(entryList)
 }
 

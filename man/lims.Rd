@@ -35,8 +35,8 @@ Julien Wist
 ## use this command to read from a file in.txt
 ## listOfURL<-as.vector(unlist(read.table('in.txt',sep='')))
 
-data(urlList)
-dataSet <- lims(as.vector(unlist(urlList)),c('noesygpps1dcomp'))
+#data(urlList)
+#dataSet <- lims(as.vector(unlist(urlList)),c('noesygpps1dcomp'))
 
 }
 

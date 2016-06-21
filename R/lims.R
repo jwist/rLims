@@ -1,4 +1,3 @@
-
 # #Make generic function
 # # This is the "constructor" function...
 # # ... UseMethod should have the name of the function!
@@ -93,8 +92,16 @@ lims.loopAppend <- function(var,dest) {
 ## A mask can be attributed that will be used by plot methods and other to display
 ## a selected area of the spectra without replicating the data in a new variable
 lims.spectraCreator <- function(spec,type='nmr',mask=NULL) {
-	x_min <- range(spec[[1]])[1]
-	x_max <- range(spec[[1]])[2]
+	x_min <- min(spec[[1]])
+	x_max <- max(spec[[1]])
+  
+  #print(x_min)
+  #print(x_max)
+  #print(range(spec[,1]))
+	#class("spec")
+	#print(is(spec[,1]))
+	#print(dim(spec))
+  
 	y <- spec[[2]]
 	
 	lines=list() # todo retrieve nmrLines if exist on lims
@@ -104,8 +111,8 @@ lims.spectraCreator <- function(spec,type='nmr',mask=NULL) {
 	}
 	
 	switch(type,
-				 nmr=spectra  <- list('type'=type,'intensity'=rev(y),'xlims'=range(spec[[1]]),'nmrLines'=lines,'mask'=mask),
-				 ir=spectra  <- list('type'=type,'intensity'=rev(y),'xlims'=range(spec[[1]]),'irLines'=lines,'mask'=mask),
+				 nmr=spectra  <- list('type'=type,'intensity'=rev(y),'xlims'=c(x_min,x_max),'nmrLines'=lines,'mask'=mask),
+				 ir=spectra  <- list('type'=type,'intensity'=rev(y),'xlims'=c(x_min,x_max),'irLines'=lines,'mask'=mask),
 				 gcms=,
 				 'not defined yet'
 	)
@@ -218,15 +225,15 @@ lims.spectra.setMask <- function(spectraVarName,list=list()) {
 			# evaluate how to deal with found intervals 
 			# todo some cases are not treated
 			if (length(levels(I)) == length(list)+1) {
-				print(1)
+			#	print(1)
 				levels(I) <- rep(c(FALSE,TRUE),times=length(list)/2+1)[-(length(list)+2)]
 				print(sum(as.logical(I)))
 			} else if (length(levels(I)) == length(list)) {
 				if (list[1] <= spectra$xlims[1]) {
-					print(21)
+			#		print(21)
 					levels(I) <- rep(c(TRUE,FALSE),times=length(list)-2)
 				} else if (list[length(list)] >= spectra$xlims[2]){
-					print(22)
+			#		print(22)
 					levels(I) <- rep(c(FALSE,TRUE),times=length(list)-2)	
 				}
 			} else if (length(levels(I)) == length(list)-1) {
@@ -308,7 +315,7 @@ lims.JSON.getEntry<-function(url,LOG=FALSE,...) {
 	} else if ( is.vector(url) && !is.list(url) ) {
 		#json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[i],warn=FALSE), collapse="")) ,'url'=url[i])) # retrieve JSON
 		json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[i],warn=FALSE), collapse=""))[[1]][[1]] ,'url'=url[i])) # retrieve JSON
-		
+	#	print(json_data)
 	} else if ( is.list(url) ) {
 		#stop('Please provide url as a vector!')
 		json_data <- lapply( seq_along(url),function(i) c(fromJSON(paste(readLines(url[[i]],warn=FALSE), collapse=""))[[1]][[1]] ,'url'=url[i])) # retrieve JSON
@@ -504,21 +511,21 @@ lims.getUserSamplesMetaData <- function(...) {
 
 ##%%%%%%%%%%%%
 
-lims.selectSamples <- function(userData,index,exclude=FALSE) {
-	userData$samples <- userData$samples[index]
+#lims.selectSamples <- function(userData,index,exclude=FALSE) {
+#	userData$samples <- userData$samples[index]
 	
-	if ( exclude == TRUE ) { index <- -index }
+#	if ( exclude == TRUE ) { index <- -index }
 	
-	for ( i in c("infos","params","iupacs","keywords") ) {
-		if (ncol(userData$metaData[i][[1]]) == 1) {
-			userData$metaData[i][[1]] <- userData$metaData[i][[1]][[1]][index]
-		} else {
-			userData$metaData[i][[1]] <- userData$metaData[i][[1]][index,]
-		}
-	}
+#	for ( i in c("infos","params","iupacs","keywords") ) {
+#		if (ncol(userData$metaData[i][[1]]) == 1) {
+#			userData$metaData[i][[1]] <- userData$metaData[i][[1]][[1]][index]
+#		} else {
+#			userData$metaData[i][[1]] <- userData$metaData[i][[1]][index,]
+#		}
+#	}
 	
-	return(userData)
-}
+#	return(userData)
+#}
 
 ##%%%%%%%%%%%%
 
@@ -571,101 +578,106 @@ lims.findNumberOfSpectra <- function(entryList) {
 
 ##%%%%%%%%%%%%
 
-lims.getNmrs <- function(entryList=entryList,...) {
-	
-	functionName <- 'lims.getNmrs'
-	argList<-list(...)
-	
-	if (!is.na(match('LOG',names(argList)))) {
-		LOG <- argList$LOG
-	} else {
-		LOG <- FALSE
-	}
-	
-	if (!is.na(match('dry',names(argList)))) {
-		dry <- argList$dry
-	} else {
-		dry <- FALSE
-	}
-	
-	if (!is.na(match('OP',names(argList)))) {
-		OP <- argList$OP
-	} else {
-		OP <- 'AND'
-	}
-	
-	if (!is.na(match('Filter',names(argList)))) {
-		Filter <- argList$Filter
-	} else {
-		Filter <- list()
-	}
-	
-	t <- list()
-	s <- list()
-	p <- list()
-	info <- list()
-	
-	if (sum(is.na(match(names(Filter),names(entryList[[1]]$nmrs[[1]])))) != 0) {
-		warning('lims.getNmrs: some names in parameter filter are not correct, please check')
-	}
-	
-	if (length(entryList) > 0) {
-		for (i in 1:length(entryList)) {
-			x <- entryList[[i]]
-			if (length(x$nmrs) > 0) {
-				for (j in 1:length(x$nmrs)) {
-					y <- x$nmrs[[j]]
-					
-					z <- NULL
-					for (i in 1:length(Filter)) {
-						zt <- paste('!is.na(match(y[names(Filter)[',i,']],Filter[[',i,']]))',sep='')
-						if (is.null(z)) {
-							z <- zt
-						} else {
-							if (OP == 'AND') {
-								z  <- paste(z,zt,sep=' & ')
-							} else if (OP == 'OR') {
-								z  <- paste(z,zt,sep=' | ')
-							}
-						}
-					}
-					
-					if (eval(parse(text=z))) { # test for filter
-						
-						# retrieve spectra and store them as a list to avoid dimension problems
-						if (!dry) {
-							spect <- read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
-							s <- rbind(s, list('spectra'=lims.spectraCreator(spect[1:(dim(spect)[1]/2),] ))) # taking only real part of spectrum
-							if (LOG) {
-								msg <- paste('spectra: ',x$entryID,' / ', y$resourceURL,sep='')
-								lims.log(prefix='        ',scriptName=functionName,msg=msg,file=argList$logfile)
-							}
-							
-						}
-						# merge infos
-						if (!is.na(match('entryData',names(argList)))) {
-							entryData = argList$entryData
-							p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
-							info  <- rbind(info, entryData$info[entryData$info$entryID == x$entryID,])
-							t <- rbind(t,list(
-								'entryID'=x$entryID,
-								'experiment'=y$experiment,
-								'temperature'=y$temperature,
-								'nucleus'=y$nucleus,
-								'solvent'=y$solvent,	
-								'resourceURL'=y$resourceURL
-							))
-						}
-					}
-				}} #nmrs
-		}} #entry
-	
-	# returns nmrData
-	if (!dry) {
-		return(list('spectra'=s,'nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
-	} else {
-		return(list('nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
-	}
+lims.getNmrs <- function(entryList=entryList,factor=2,...) {
+  
+  functionName <- 'lims.getNmrs'
+  argList<-list(...)
+  
+  if (!is.na(match('LOG',names(argList)))) {
+    LOG <- argList$LOG
+  } else {
+    LOG <- FALSE
+  }
+  
+  if (!is.na(match('dry',names(argList)))) {
+    dry <- argList$dry
+  } else {
+    dry <- FALSE
+  }
+  
+  if (!is.na(match('OP',names(argList)))) {
+    OP <- argList$OP
+  } else {
+    OP <- 'AND'
+  }
+  
+  if (!is.na(match('Filter',names(argList)))) {
+    Filter <- argList$Filter
+  } else {
+    Filter <- list()
+  }
+  
+  t <- list()
+  s <- list()
+  p <- list()
+  info <- list()
+  
+  if (sum(is.na(match(names(Filter),names(entryList[[1]]$nmrs[[1]])))) != 0) {
+    warning('lims.getNmrs: some names in parameter filter are not correct, please check')
+  }
+  
+  if (length(entryList) > 0) {
+    for (i in 1:length(entryList)) {
+      x <- entryList[[i]]
+      if (length(x$nmrs) > 0) {
+        for (j in 1:length(x$nmrs)) {
+          y <- x$nmrs[[j]]
+          
+          z <- NULL
+          for (i in 1:length(Filter)) {
+            zt <- paste('!is.na(match(y[names(Filter)[',i,']],Filter[[',i,']]))',sep='')
+            if (is.null(z)) {
+              z <- zt
+            } else {
+              if (OP == 'AND') {
+                z  <- paste(z,zt,sep=' & ')
+              } else if (OP == 'OR') {
+                z  <- paste(z,zt,sep=' | ')
+              }
+            }
+          }
+          
+          if (eval(parse(text=z))) { # test for filter
+            
+            # retrieve spectra and store them as a list to avoid dimension problems
+            if (!dry) {
+              spect <- read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
+              
+             # print(sum(is.na(spect[1:(dim(spect)[1]/2),][[1]])))
+            #  print(range(spect[1:(dim(spect)[1]/2),][[1]]))
+             # plot(lims.spectraCreator(spect[1:(dim(spect)[1]/2),] ))
+             
+              s <- rbind(s, list('spectra'=lims.spectraCreator(data.frame(spect[1:(dim(spect)[1]/factor),] )))) # taking only real part of spectrum
+              if (LOG) {
+                msg <- paste('spectra: ',x$entryID,' / ', y$resourceURL,sep='')
+                lims.log(prefix='        ',scriptName=functionName,msg=msg,file=argList$logfile)
+              }
+              
+            }
+            # merge infos
+            if (!is.na(match('entryData',names(argList)))) {
+              entryData = argList$entryData
+              p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
+              info  <- rbind(info, entryData$info[entryData$info$entryID == x$entryID,])
+              t <- rbind(t,list(
+                'entryID'=x$entryID,
+                'experiment'=y$experiment,
+                'temperature'=y$temperature,
+                'nucleus'=y$nucleus,
+                'solvent'=y$solvent,	
+                'resourceURL'=y$resourceURL
+              ))
+            }
+          }
+        }} #nmrs
+    }} #entry
+  
+  # returns nmrData
+  if (!dry) {
+    return(list('spectra'=s,'nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
+  } else {
+    return(list('nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
+  }
 }
 #example
 # Filter <- list('experiment'=c('zg30','noesygpps1dcomp'),'solvent'=c('C6D6','COFFEEmeoh'))
@@ -674,104 +686,104 @@ lims.getNmrs <- function(entryList=entryList,...) {
 
 ##%%%%%%%%%%%%
 
-lims.getSpectra <- function(metaData=metaData,...) {
+#lims.getSpectra <- function(metaData=metaData,...) {
 	
-	entryList <- metaData$samples
-	entryData <- metaData$metaData
+#	entryList <- metaData$samples
+#	entryData <- metaData$metaData
 	
-	functionName <- 'lims.getSpectra'
-	argList<-list(...)
+#	functionName <- 'lims.getSpectra'
+#	argList<-list(...)
 	
-	if (!is.na(match('LOG',names(argList)))) {
-		LOG <- argList$LOG
-	} else {
-		LOG <- FALSE
-	}
+#	if (!is.na(match('LOG',names(argList)))) {
+#		LOG <- argList$LOG
+#	} else {
+#		LOG <- FALSE
+#	}
 	
-	if (!is.na(match('dry',names(argList)))) {
-		dry <- argList$dry
-	} else {
-		dry <- FALSE
-	}
+#	if (!is.na(match('dry',names(argList)))) {
+#		dry <- argList$dry
+#	} else {
+#		dry <- FALSE
+#	}
 	
-	if (!is.na(match('OP',names(argList)))) {
-		OP <- argList$OP
-	} else {
-		OP <- 'AND'
-	}
+#	if (!is.na(match('OP',names(argList)))) {
+#		OP <- argList$OP
+#	} else {
+#		OP <- 'AND'
+#	}
 	
-	if (!is.na(match('Filter',names(argList)))) {
-		Filter <- argList$Filter
-	} else {
-		Filter <- list()
-	}
+#	if (!is.na(match('Filter',names(argList)))) {
+#		Filter <- argList$Filter
+#	} else {
+#		Filter <- list()
+#	}
 	
-	t <- list()
-	s <- list()
-	p <- list()
-	info <- list()
+#	t <- list()
+#	s <- list()
+#	p <- list()
+#	info <- list()
 	
-	if (sum(is.na(match(names(Filter),names(entryList[[1]]$nmrs[[1]])))) != 0) {
-		warning('lims.getSpectra: some names in parameter filter are not correct, please check')
-	}
+#	if (sum(is.na(match(names(Filter),names(entryList[[1]]$nmrs[[1]])))) != 0) {
+#		warning('lims.getSpectra: some names in parameter filter are not correct, please check')
+#	}
 	
-	if (length(entryList) > 0) {
-		for (i in 1:length(entryList)) {
-			x <- entryList[[i]]
-			if (length(x$nmrs) > 0) {
-				for (j in 1:length(x$nmrs)) {
-					y <- x$nmrs[[j]]
+#	if (length(entryList) > 0) {
+#		for (i in 1:length(entryList)) {
+#			x <- entryList[[i]]
+#			if (length(x$nmrs) > 0) {
+#				for (j in 1:length(x$nmrs)) {
+#					y <- x$nmrs[[j]]
 					
-					z <- NULL
-					for (i in 1:length(Filter)) {
-						zt <- paste('!is.na(match(y[names(Filter)[',i,']],Filter[[',i,']]))',sep='')
-						if (is.null(z)) {
-							z <- zt
-						} else {
-							if (OP == 'AND') {
-								z  <- paste(z,zt,sep=' & ')
-							} else if (OP == 'OR') {
-								z  <- paste(z,zt,sep=' | ')
-							}
-						}
-					}
-					
-					if (eval(parse(text=z))) { # test for filter
+#					z <- NULL
+#					for (i in 1:length(Filter)) {
+#						zt <- paste('!is.na(match(y[names(Filter)[',i,']],Filter[[',i,']]))',sep='')
+#						if (is.null(z)) {
+#							z <- zt
+#						} else {
+#							if (OP == 'AND') {
+#								z  <- paste(z,zt,sep=' & ')
+#							} else if (OP == 'OR') {
+#								z  <- paste(z,zt,sep=' | ')
+#							}
+#						}
+#					}
+#					
+#					if (eval(parse(text=z))) { # test for filter
 						
-						# retrieve spectra and store them as a list to avoid dimension problems
-						if (!dry) {
-							spect <- read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
-							s <- rbind(s, list('spectra'=lims.spectraCreator(spect[1:(dim(spect)[1]/2),] ))) # taking only real part of spectrum
-							if (LOG) {
-								msg <- paste('spectra: ',x$entryID,' / ', y$resourceURL,sep='')
-								lims.log(prefix='        ',scriptName=functionName,msg=msg,file=argList$logfile)
-							}
+#						# retrieve spectra and store them as a list to avoid dimension problems
+#						if (!dry) {
+#							spect <- read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
+#							s <- rbind(s, list('spectra'=lims.spectraCreator(spect[1:(dim(spect)[1]/2),] ))) # taking only real part of spectrum
+#							if (LOG) {
+#								msg <- paste('spectra: ',x$entryID,' / ', y$resourceURL,sep='')
+#								lims.log(prefix='        ',scriptName=functionName,msg=msg,file=argList$logfile)
+#							}
 							
-						}
+#						}
 						# merge infos
 
-						p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
-						info  <- rbind(info, entryData$infos[entryData$infos$entryID == x$entryID,])
-						t <- rbind(t,list(
-							'entryID'=x$entryID,
-							'experiment'=y$experiment,
-							'temperature'=y$temperature,
-							'nucleus'=y$nucleus,
-							'solvent'=y$solvent,	
-							'resourceURL'=y$resourceURL
-						))
-						
-					}
-				}} #nmrs
-		}} #entry
+#						p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
+#						info  <- rbind(info, entryData$infos[entryData$infos$entryID == x$entryID,])
+#						t <- rbind(t,list(
+#							'entryID'=x$entryID,
+#							'experiment'=y$experiment,
+#							'temperature'=y$temperature,
+#							'nucleus'=y$nucleus,
+#							'solvent'=y$solvent,	
+#							'resourceURL'=y$resourceURL
+#						))
+#						
+#					}
+#				}} #nmrs
+#		}} #entry
 	
 	# returns nmrData
-	if (!dry) {
-		return(list('spectra'=s,'nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
-	} else {
-		return(list('nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
-	}
-}
+#	if (!dry) {
+#		return(list('spectra'=s,'nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
+#	} else {
+#		return(list('nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
+#	}
+#}
 #example
 
 ##%%%%%%%%%%%%
@@ -781,29 +793,26 @@ lims.findSpectraSize <- function(data) {
 }
 
 ##%%%%%%%%%%%%
-
-# this function creates data ready for analysis
-# 1) flatten spectra into spectra objects
-# 2) add relevant information
 lims.createDataSet <- function(nmrList) {
-	# check for dimension problem
-	t <- unlist(lapply(nmrList$spectra,function(x) dim(x)))
-	if (min(t) != max(t)) {
-		print(t)
-		stop('Cannot create data set, check size of spectra')
-	} else {
-		
-		s <- nmrList[['spectra']]
-		
-		for (i in 1:nrow(s)) {
-			ifelse(!exists('nmrData'),nmrData <- as.numeric(lims.spectra.toDataframe(s[[i]])),
-						 nmrData <- rbind(nmrData, as.numeric(lims.spectra.toDataframe(s[[i]]))))
-		}
-		
-		ppm <- seq(s[[1]]$xlims[1],s[[1]]$xlims[2],along.with=s[[1]]$intensity)[s[[1]]$mask]
-	}
-	return(list('nmrData'=nmrData,'ppm'=ppm,'param'=nmrList$param,'nmrInfo'=nmrList$nmrInfo))
+  # check for dimension problem
+  t <- unlist(lapply(nmrList$spectra,function(x) dim(x)))
+  if (min(t) != max(t)) {
+    print(t)
+    stop('Cannot create data set, check size of spectra')
+  } else {
+    
+    s <- nmrList[['spectra']]
+    
+    for (i in 1:nrow(s)) {
+      ifelse(!exists('nmrData'),nmrData <- as.numeric(lims.spectra.toDataframe(s[[i]])),
+             nmrData <- rbind(nmrData, as.numeric(lims.spectra.toDataframe(s[[i]]))))
+    }
+    
+    ppm <- seq(s[[1]]$xlims[1],s[[1]]$xlims[2],along.with=s[[1]]$intensity)[s[[1]]$mask]
+  }
+  return(list('nmrData'=nmrData,'ppm'=ppm,'param'=nmrList$param,'nmrInfo'=nmrList$nmrInfo))
 }
+
 # example
 # data <- lims.createDataSet(nmrList)
 
@@ -875,111 +884,8 @@ lims <- function(urlList,experimentList=list(),...) {
 
 #### DISPLAY FUNCTIONS ####
 
-diffplot <- function(png=NULL,...) {
-	
-	# get arguments 
-	args <- as.list( sys.call() ) # get names
-	argList<-list(...) # get args
-	
-	## check if using x and y or dataSata as input
-	if ( (is.null(args$y) && is.null(args$x)) && !is.null(args$data) ) { 
-		y <- argList$data$nmrData
-		x <- argList$data$ppm
-	} else if ( (!is.null(args$y) && !is.null(args$x)) && is.null(args$data) ) {
-		x <- argList$x
-		y <- argList$y
-	} else {
-		stop("Please check your input, there is a problem with your definition of x and y")
-	}
-	
-	ifelse(is.null(args$main), title <- "" , title <- argList$main)
-	if (is.null(args$xlab)) { args$xlab <- "Chemical Shift [ppm]" }
-	if (is.null(args$ylab)) { args$ylab <- "Relative Intensity" }
-	if (is.null(args$col)) {
-		if (is.null(nrow(y))) { 
-			group <- 1 
-		} else {
-			group <- (c(1:nrow(y)) %% 9 ) + 1
-		}
-	} else {
-		group = argList$col
-	}
-	
-	## if groupBy is defined we overwrite the col argument
-	if ( !is.null(args$groupBy) ) {
-		if ( !is.null(args$col) ) {
-			warning("col arguments has been overwritten by groupBy argument")
-		}
-		group <- argList$data$param[argList$groupBy]
-	}
-	
-	# print
-	ifelse(is.null(args$limits), limits <- range(x) , limits <- argList$limits)
-	
-	#  png(paste("./images/noise_",log,"_",param$name[i],".png",sep=""), bg="transparent", width=700, height=300)
-	F <- x > min(limits) & x < max(limits)
-	if (is.null(nrow(y))) {
-		matplot(x[F],y[F], type="l",xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(x[F])),main=title)
-	} else {
-		matplot(x[F],t(y[,F]), type="l",xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(x[F])),main=title)
-	}
-	
-}
-
-#a few examples
-#diffplot(x=ppm,y=nmrData,col=c(rep(1,25),rep(2,25)))
-#diffplot(x=ppm,y=nmrData,limits=c(-5,-0.2),col=c(rep(1,25),rep(2,25)))
-#diffplot(x=ppm,y=nmrData,limits=c(12,14.5),col=c(rep(1,25),rep(2,25)))
-#diffplot(limits,x=ppm,y=nmrData,xlab="Chemical Shift [ppm]",ylab="Relative Intensity",col=col)
-#diffplot(data=dataSet,limits=c(6.5,8),col=c(1,2,3))
-
-getNoise <- function(limits,log=NULL) {
-	F <- ppm > min(limits) & ppm < max(limits)
-	#ppmOff<-ppm[F]
-	#nmrDataOff<-nmrData[,F]
-	offset <- apply(nmrData[,F],1,sum)/dim(nmrData[,F])[2]; names(offset) <- NULL
-	noise <- apply(nmrData[,F],1,sd); names(noise) <- NULL
-	
-	if (!is.null(log)) {
-		for (i in 1:nrow(nmrData)) {
-			png(paste("./images/noise_",log,"_",param$name[i],".png",sep=""), bg="transparent", width=700, height=300)
-			txt <- paste("Noise region (",param$name[i],"), N: ",round(noise[i],2)," / off: ",round(offset[i],2),sep="")
-			#diffplot(limits,index=ppm,data=nmrData[i,],limits=c(A,B),main=txt)
-			#abline(h = offset[i], col = 3, lwd=2) 
-			diffplot(limits,index=ppm,data=nmrData[i,]-offset[i],limits=limits,main=txt)
-			abline(h = 0, col = 3, lwd=2)
-			abline(h = noise[i], col = 2, lwd=2)
-			abline(h = -noise[i], col = 2, lwd=2)
-			abline(h = 3*noise[i], col = 4, lwd=2)
-			abline(h = -3*noise[i], col = 4, lwd=2)
-			dev.off()
-		}
-	}
-	return(res=list("offset"=offset,"noise"=noise))
-}
-
-
-##### integration #####
-
-
-integ <- function(A,B) {
-	F <- ppm > A & ppm < B
-	
-	diffplot(index=ppm[F],data=nmrData[,F])
-	
-	S <- c()
-	for (i in 1:nrow(nmrData)) {
-		G <- nmrData[i,F] > 3*noise[i]
-		S[i] <- sum(nmrData[i,F][G])
-	}
-	
-	plot(density(S))
-	
-	return(S)
-}
-
 # diffplot <- function(index=ppm,data=nmrData,png=NULL,...) {
-# 	
+#   
 # 	# get arguments 
 # 	args <- as.list( sys.call() ) # get names
 # 	argList<-list(...) # get args
@@ -1014,14 +920,90 @@ integ <- function(A,B) {
 # 	return(res=list('xlim'=limitsx,'ylim'=limitsy))
 # }
 
-saveDevice <- function (fn) {
-	dev.copy(device= pdf, file=paste(fn, ".pdf", sep=""),
-					 width=7, height =5)
-	dev.off()
-	dev.copy(device= png, bg="transparent", file=paste(fn, ".png", sep=""),
-					 width=1000, height = 400)
-	dev.off()
-}
+
+# diffplot <- function(png=NULL,...) {  ### this have some problems
+# 	
+# 	# get arguments 
+# 	args <- as.list( sys.call() ) # get names
+# 	argList<-list(...) # get args
+# 	
+# 	## check if using x and y or dataSata as input
+# 	if ( (is.null
+#         (args$y) && is.null(args$x)) && !is.null(args$data) ) { 
+# 		y <- argList$data$nmrData
+# 		x <- argList$data$ppm
+# 	} else if ( (!is.null(args$y) && !is.null(args$x)) && is.null(args$data) ) {
+# 		x <- argList$x
+# 		y <- argList$y
+# 	} else {
+# 		stop("Please check your input, there is a problem with your definition of x and y")
+# 	}
+# 	
+# 	ifelse(is.null(args$main), title <- "" , title <- argList$main)
+# 	if (is.null(args$xlab)) { args$xlab <- "Chemical Shift [ppm]" }
+# 	if (is.null(args$ylab)) { args$ylab <- "Relative Intensity" }
+# 	if (is.null(args$col)) {
+# 		if (is.null(nrow(y))) { 
+# 			group <- 1 
+# 		} else {
+# 			group <- (c(1:nrow(y)) %% 9 ) + 1
+# 		}
+# 	} else {
+# 		group = argList$col
+# 	}
+# 	
+# 	## if groupBy is defined we overwrite the col argument
+# 	if ( !is.null(args$groupBy) ) {
+# 		if ( !is.null(args$col) ) {
+# 			warning("col arguments has been overwritten by groupBy argument")
+# 		}
+# 		group <- argList$data$param[argList$groupBy]
+# 	}
+# 	
+# 	# print
+# 	ifelse(is.null(args$limits), limits <- range(x) , limits <- argList$limits)
+# 	
+# 	#  png(paste("./images/noise_",log,"_",param$name[i],".png",sep=""), bg="transparent", width=700, height=300)
+# 	F <- x > min(limits) & x < max(limits)
+# 	if (is.null(nrow(y))) {
+# 		matplot(x[F],y[F], type="l",xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(x[F])),main=title)
+# 	} else {
+# 		matplot(x[F],t(y[,F]), type="l",xlab=args$xlab,ylab=args$ylab,col=group,xlim=rev(range(x[F])),main=title)
+# 	}
+# 	
+# }
+
+#a few examples
+#diffplot(x=ppm,y=nmrData,col=c(rep(1,25),rep(2,25)))
+#diffplot(x=ppm,y=nmrData,limits=c(-5,-0.2),col=c(rep(1,25),rep(2,25)))
+#diffplot(x=ppm,y=nmrData,limits=c(12,14.5),col=c(rep(1,25),rep(2,25)))
+#diffplot(limits,x=ppm,y=nmrData,xlab="Chemical Shift [ppm]",ylab="Relative Intensity",col=col)
+#diffplot(data=dataSet,limits=c(6.5,8),col=c(1,2,3))
+
+#getNoise <- function(limits,log=NULL) {
+#	F <- ppm > min(limits) & ppm < max(limits)
+	#ppmOff<-ppm[F]
+	#nmrDataOff<-nmrData[,F]
+#	offset <- apply(nmrData[,F],1,sum)/dim(nmrData[,F])[2]; names(offset) <- NULL
+#	noise <- apply(nmrData[,F],1,sd); names(noise) <- NULL
+	
+#	if (!is.null(log)) {
+#		for (i in 1:nrow(nmrData)) {
+#			png(paste("./images/noise_",log,"_",param$name[i],".png",sep=""), bg="transparent", width=700, height=300)
+#			txt <- paste("Noise region (",param$name[i],"), N: ",round(noise[i],2)," / off: ",round(offset[i],2),sep="")
+			#diffplot(limits,index=ppm,data=nmrData[i,],limits=c(A,B),main=txt)
+			#abline(h = offset[i], col = 3, lwd=2) 
+#			diffplot(limits,index=ppm,data=nmrData[i,]-offset[i],limits=limits,main=txt)
+#			abline(h = 0, col = 3, lwd=2)
+#			abline(h = noise[i], col = 2, lwd=2)
+#			abline(h = -noise[i], col = 2, lwd=2)
+#			abline(h = 3*noise[i], col = 4, lwd=2)
+#			abline(h = -3*noise[i], col = 4, lwd=2)
+#			dev.off()
+#		}
+#	}
+#	return(res=list("offset"=offset,"noise"=noise))
+#}
 
 # Examples
 # region <- c(0.65,1)
@@ -1038,6 +1020,43 @@ saveDevice <- function (fn) {
 # 
 # saveDevice("./images/a1")
 
+
+##### integration #####
+
+
+#integ <- function(A,B) {
+#	F <- ppm > A & ppm < B
+	
+#	diffplot(index=ppm[F],data=nmrData[,F])
+	
+#	S <- c()
+#	for (i in 1:nrow(nmrData)) {
+#		G <- nmrData[i,F] > 3*noise[i]
+#		S[i] <- sum(nmrData[i,F][G])
+#	}
+	
+#	plot(density(S))
+	
+#	return(S)
+#}
+
+saveDevice <- function (fn) {
+	dev.copy(device= pdf, file=paste(fn, ".pdf", sep=""),
+					 width=7, height =5)
+	dev.off()
+	dev.copy(device= png, bg="transparent", file=paste(fn, ".png", sep=""),
+					 width=700, height = 500)
+	dev.off()
+}
+
+plotMulti<-function(ppm,nmrData, A,B,col){
+  
+  x<-which(ppm>A & ppm < B)
+  ppmx<-ppm[x]
+  nmrDatax<-nmrData[,x]
+  max<-max(apply(nmrDatax,2,max))
+  matplot(ppmx,t(nmrDatax), xlab="Chemical Shift [ppm]", ylab="Relative Intensity", type="l", frame.plot=FALSE, xlim=c(B,A), ylim=c(0,max), col=col)
+}
 
 
 ##############################
@@ -1073,5 +1092,156 @@ saveDevice <- function (fn) {
 # #lims.get(entryList)
 
 
+
+
+#exploreData<-function(ppm,data,param){
+  
+#  cl <- rainbow(dim(data)[1])
+#  matplot(ppm, xlim=c(10,1), t(data),type = "l", col=cl, ylab="Intensity", xlab="ppm")
+#  zoom=function(){reg=locator(2);plot(reg,type='n')}
+#  zoom()
+#  listR<-c()
+#  for (i in 1:dim(data)[1]){
+#    lines(ppm,data[i,],col = cl[i])
+#    r<-legend("topleft", legend=paste(param$entryID[i]), col=cl[i], pch=1)
+#    listR[i]<-list(c(paste(param$entryID[i]),cl[i]))
+#    readline("Press <return to continue")
+#    rm(r)
+#  }
+#}
+
+  
+
+findRepetitions<-function(nmrList){
+  F<-duplicated(nmrList$info$entryID)
+  index<-c()
+  dup<-nmrList$info$entryID[F]
+ # if(length(dup)<0){
+  #  index[i] <- 0
+  #} else {
+  #  print("no repetitions") 
+  #}
+  for (i in c(1:length(dup))){
+    index[i]<-list(grep(dup[i],nmrList$info$entryID))
+  }
+  return(list("duplicated sample"=dup,"index sample"=index))
+}
+
+
+sampleParam<- function(name,data){
+  n<-which(data$param$entryID== paste(name))
+  print("index of spectra")
+  print(paste(n))
+  param1<-data$param[n,]
+  param1[param1==""] <- NA
+  sampleParam <- param1[, colSums(is.na(param1)) == 0] 
+  return(list("sampleParam"=sampleParam))
+}
+
+
+lims.getIrs <- function(entryList=entryList,...) {
+  
+  functionName <- 'lims.getIrs'
+  argList<-list(...)
+  
+  if (!is.na(match('LOG',names(argList)))) {
+    LOG <- argList$LOG
+  } else {
+    LOG <- FALSE
+  }
+  
+  if (!is.na(match('dry',names(argList)))) {
+    dry <- argList$dry
+  } else {
+    dry <- FALSE
+  }
+  
+  if (!is.na(match('OP',names(argList)))) {
+    OP <- argList$OP
+  } else {
+    OP <- 'AND'
+  }
+  
+  if (!is.na(match('Filter',names(argList)))) {
+    Filter <- argList$Filter
+  } else {
+    Filter <- list()
+  }
+  
+  t <- list()
+  s <- list()
+  p <- list()
+  info <- list()
+  
+  if (sum(is.na(match(names(Filter),names(entryList[[1]]$irs[[1]])))) != 0) {
+    warning('lims.getIrs: some names in parameter filter are not correct, please check')
+  }
+  
+  if (length(entryList) > 0) {
+    for (i in 1:length(entryList)) {
+      x <- entryList[[i]]
+      if (length(x$irs) > 0) {
+        for (j in 1:length(x$irs)) {
+          y <- x$irs[[j]]
+          
+          z <- NULL
+          for (i in 1:length(Filter)) {
+            zt <- paste('!is.na(match(y[names(Filter)[',i,']],Filter[[',i,']]))',sep='')
+            if (is.null(z)) {
+              z <- zt
+            } else {
+              if (OP == 'AND') {
+                z  <- paste(z,zt,sep=' & ')
+              } else if (OP == 'OR') {
+                z  <- paste(z,zt,sep=' | ')
+              }
+            }
+          }
+          
+          if (eval(parse(text=z))) { # test for filter
+            
+            # retrieve spectra and store them as a list to avoid dimension problems
+            if (!dry) {
+              spect <- read.table(sprintf("%s&filter=JcampToXY",y$resourceURL),sep=',',colClasses='numeric')
+              #  spect <- read.table(sprintf("%s&filter=JcampToXY",entry[[1]]$irs[[1]]$resourceURL),sep=',',colClasses='numeric')
+              #  print(spect)
+              # print(y$resourceURL)
+              # print(sum(is.na(spect[1:(dim(spect)[1]/2),][[1]])))
+              #   print(range(spect[1:(dim(spect)[1]/2),][[1]]))
+              #   plot(lims.spectraCreator(spect[1:(dim(spect)[1]/2),] ))
+              
+              s <- rbind(s, list('spectra'=lims.spectraCreator(data.frame(spect[1:(dim(spect)[1]),] ), type="ir"))) # taking only real part of spectrum
+              #  print(s)
+              if (LOG) {
+                msg <- paste('spectra: ',x$entryID,' / ', y$resourceURL,sep='')
+                lims.log(prefix='        ',scriptName=functionName,msg=msg,file=argList$logfile)
+              }
+              
+            }
+            # merge infos
+            if (!is.na(match('entryData',names(argList)))) {
+              entryData = argList$entryData
+              p <- rbind(p, entryData$params[entryData$params$entryID == x$entryID,])
+              info  <- rbind(info, entryData$info[entryData$info$entryID == x$entryID,])
+              t <- rbind(t,list(
+                'entryID'=x$entryID,
+                'experiment'=y$experiment,
+                'temperature'=y$temperature,
+                'nucleus'=y$nucleus,
+                'solvent'=y$solvent,  
+                'resourceURL'=y$resourceURL
+              ))
+            }
+          }
+        }} #irss
+    }} #entry
+  
+  # returns nmrData
+  if (!dry) {
+    return(list('spectra'=s,'nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
+  } else {
+    return(list('nmrInfo'=data.frame(t),'param'=data.frame(p),'info'=data.frame(info)))
+  }
+}
 
 

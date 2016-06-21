@@ -31,10 +31,11 @@ See lims.spectraCreator and plot (generic function)
 \examples{
 
 # example 
+\dontrun{
 fakeSpectra <- list(x=c(1:100),y=sin(seq(1,6.27,length.out=100)))
 s <- lims.spectraCreator(fakeSpectra)
 plot(s,xlimit=c(40,60))
-
+}
 }
 
 \keyword{ lims }

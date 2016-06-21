@@ -25,14 +25,14 @@ Julien Wist
 }
 
 \examples{
-
+\dontrun{
 # example 
 fakeSpectra <- list(x=c(1:100),y=sin(seq(1,6.27,length.out=100)))
 s <- lims.spectraCreator(fakeSpectra)
 ## will use the plot.spectra methods
 plot(s) 
 ## while this will use the generic plot function
-plot(as.numeric(lims.spectra.toDataframe(s)))
+plot(as.numeric(lims.spectra.toDataframe(s)))}
 
 }
 
